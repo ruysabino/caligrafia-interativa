@@ -70,17 +70,13 @@ window.onload = () => {
   inputTamanho.addEventListener("input", () => {
     labelTamanho.textContent = inputTamanho.value;
   });
-
-const tamanhoPx = parseInt(document.getElementById("tamanho-fonte").value);
-linhaTreino.style.fontSize = tamanho;
-linhaTreino.style.lineHeight = "1";
-linhaTreino.style.height = (tamanhoPx * 1.2) + "px"; // ajusta a altura
 };
 
 function gerarCaligrafia() {
   const texto = document.getElementById("input-texto").value;
   const fonte = document.getElementById("fonte").value;
   const tamanho = document.getElementById("tamanho-fonte").value + "px";
+  const tamanhoPx = parseInt(document.getElementById("tamanho-fonte").value);
   const qtdLinhas = parseInt(document.getElementById("qtd-linhas").value);
   const tipoTreino = document.getElementById("tipo-treino").value;
 
@@ -95,16 +91,13 @@ function gerarCaligrafia() {
     linhaModelo.textContent = texto;
     folha.appendChild(linhaModelo);
 
-const tamanhoPx = parseInt(document.getElementById("tamanho-fonte").value);
-
-if (tipoTreino === "linha") {
-  const linhaTreino = document.createElement("div");
-  linhaTreino.className = "linha-treino treino-linha";
-  linhaTreino.style.fontSize = tamanho;
-  linhaTreino.style.height = (tamanhoPx * 1.2) + "px";
-  linhaTreino.textContent = "_".repeat(texto.length);
-  folha.appendChild(linhaTreino);
-}
+    if (tipoTreino === "linha") {
+      const linhaTreino = document.createElement("div");
+      linhaTreino.className = "linha-treino treino-linha";
+      linhaTreino.style.fontSize = tamanho;
+      linhaTreino.style.height = (tamanhoPx * 1.2) + "px";
+      linhaTreino.textContent = "_".repeat(texto.length);
+      folha.appendChild(linhaTreino);
     } else if (tipoTreino === "guia") {
       const linhaGuia = document.createElement("div");
       linhaGuia.className = "linha-treino treino-guia";
