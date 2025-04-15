@@ -1,12 +1,58 @@
-@font-face {
-  font-family: 'KGPrimaryDots';
-  src: url('fonts/KGPrimaryDots.ttf') format('truetype');
-}
+@font-face { font-family: 'AbjadStarsKidDottLineReg-m2P92'; src: url('fonts/AbjadStarsKidDottLineReg-m2P92.ttf') format('truetype'); }
+@font-face { font-family: 'BmdLettersForLearnersDotsHattedJ-WXBE'; src: url('fonts/BmdLettersForLearnersDotsHattedJ-WXBE.ttf') format('truetype'); }
+@font-face { font-family: 'BmdLettersForLearnersHattedJ-aZmR'; src: url('fonts/BmdLettersForLearnersHattedJ-aZmR.ttf') format('truetype'); }
+@font-face { font-family: 'BmdLettersForLearnersLinedDotsHattedJ-ElDn'; src: url('fonts/BmdLettersForLearnersLinedDotsHattedJ-ElDn.ttf') format('truetype'); }
+@font-face { font-family: 'BmdLettersForLearnersLinedHattedJ-O2D4'; src: url('fonts/BmdLettersForLearnersLinedHattedJ-O2D4.ttf') format('truetype'); }
+@font-face { font-family: 'ColeCarreira'; src: url('fonts/ColeCarreira.ttf') format('truetype'); }
+@font-face { font-family: 'Cursif'; src: url('fonts/Cursif.ttf') format('truetype'); }
+@font-face { font-family: 'Cursifl'; src: url('fonts/Cursifl.ttf') format('truetype'); }
+@font-face { font-family: 'Cursive standard Bold'; src: url('fonts/Cursive standard Bold.ttf') format('truetype'); }
+@font-face { font-family: 'Cursive standard'; src: url('fonts/Cursive standard.ttf') format('truetype'); }
+@font-face { font-family: 'Ecolier-ZpAx'; src: url('fonts/Ecolier-ZpAx.ttf') format('truetype'); }
+@font-face { font-family: 'EcolierCp-aYRo'; src: url('fonts/EcolierCp-aYRo.ttf') format('truetype'); }
+@font-face { font-family: 'EcolierCpPointilles-e9rg'; src: url('fonts/EcolierCpPointilles-e9rg.ttf') format('truetype'); }
+@font-face { font-family: 'EcolierLignes-Wpx4'; src: url('fonts/EcolierLignes-Wpx4.ttf') format('truetype'); }
+@font-face { font-family: 'EcolierLignesPointilles-E4wz'; src: url('fonts/EcolierLignesPointilles-E4wz.ttf') format('truetype'); }
+@font-face { font-family: 'EcolierPointilles-OG08'; src: url('fonts/EcolierPointilles-OG08.ttf') format('truetype'); }
+@font-face { font-family: 'EspacoEducarPontilhada'; src: url('fonts/EspacoEducarPontilhada.TTF') format('truetype'); }
+@font-face { font-family: 'GastonDemo'; src: url('fonts/GastonDemo.otf') format('opentype'); }
+@font-face { font-family: 'Jardotty-R946'; src: url('fonts/Jardotty-R946.ttf') format('truetype'); }
+@font-face { font-family: 'KgPrimaryDots-Pl0E'; src: url('fonts/KgPrimaryDots-Pl0E.ttf') format('truetype'); }
+@font-face { font-family: 'KGPrimaryDots'; src: url('fonts/KGPrimaryDots.ttf') format('truetype'); }
+@font-face { font-family: 'KgPrimaryDotsLined-LGX4'; src: url('fonts/KgPrimaryDotsLined-LGX4.ttf') format('truetype'); }
+@font-face { font-family: 'KGPrimaryDotsLined'; src: url('fonts/KGPrimaryDotsLined.ttf') format('truetype'); }
+@font-face { font-family: 'KgPrimaryDotsLinedAlt-XMxK'; src: url('fonts/KgPrimaryDotsLinedAlt-XMxK.ttf') format('truetype'); }
+@font-face { font-family: 'KGPrimaryDotsLinedAlt'; src: url('fonts/KGPrimaryDotsLinedAlt.ttf') format('truetype'); }
+@font-face { font-family: 'KgPrimaryDotsLinedNospace-geY6'; src: url('fonts/KgPrimaryDotsLinedNospace-geY6.ttf') format('truetype'); }
+@font-face { font-family: 'KGPrimaryDotsLinedNOSPACE'; src: url('fonts/KGPrimaryDotsLinedNOSPACE.ttf') format('truetype'); }
+@font-face { font-family: 'LearningCurve-2wJ3'; src: url('fonts/LearningCurve-2wJ3.ttf') format('truetype'); }
+@font-face { font-family: 'Learningcurve-Pv7Z'; src: url('fonts/Learningcurve-Pv7Z.otf') format('opentype'); }
+@font-face { font-family: 'LearningCurve'; src: url('fonts/LearningCurve.ttf') format('truetype'); }
+@font-face { font-family: 'LearningcurveBold-7Z9B'; src: url('fonts/LearningcurveBold-7Z9B.otf') format('opentype'); }
+@font-face { font-family: 'LearningCurveBold-voDy'; src: url('fonts/LearningCurveBold-voDy.ttf') format('truetype'); }
+@font-face { font-family: 'Learningcurvedashed-m5W2'; src: url('fonts/Learningcurvedashed-m5W2.otf') format('opentype'); }
+@font-face { font-family: 'LearningCurveDashed-w4DP'; src: url('fonts/LearningCurveDashed-w4DP.ttf') format('truetype'); }
+@font-face { font-family: 'LearningCurveDashed'; src: url('fonts/LearningCurveDashed.ttf') format('truetype'); }
+@font-face { font-family: 'LearningCurveDings-7Lzw'; src: url('fonts/LearningCurveDings-7Lzw.ttf') format('truetype'); }
+@font-face { font-family: 'Learningcurvedings-dpAx'; src: url('fonts/Learningcurvedings-dpAx.otf') format('opentype'); }
+@font-face { font-family: 'LettersForLearners-A7wL'; src: url('fonts/LettersForLearners-A7wL.ttf') format('truetype'); }
+@font-face { font-family: 'LettersForLearnersDots-q932'; src: url('fonts/LettersForLearnersDots-q932.ttf') format('truetype'); }
+@font-face { font-family: 'LettersForLearnersLined-VKqz'; src: url('fonts/LettersForLearnersLined-VKqz.ttf') format('truetype'); }
+@font-face { font-family: 'LettersForLearnersLinedDots-J0aa'; src: url('fonts/LettersForLearnersLinedDots-J0aa.ttf') format('truetype'); }
+@font-face { font-family: 'Maria_lucia'; src: url('fonts/Maria_lucia.ttf') format('truetype'); }
+@font-face { font-family: 'MvJadheedhTrace-M97e'; src: url('fonts/MvJadheedhTrace-M97e.ttf') format('truetype'); }
+@font-face { font-family: 'Nealfont-1jWB'; src: url('fonts/Nealfont-1jWB.ttf') format('truetype'); }
+@font-face { font-family: 'QuicksandboldobliqueRegular-XE3o'; src: url('fonts/QuicksandboldobliqueRegular-XE3o.otf') format('opentype'); }
+@font-face { font-family: 'QuicksandboldRegular-44B9'; src: url('fonts/QuicksandboldRegular-44B9.otf') format('opentype'); }
+@font-face { font-family: 'QuicksandbookobliqueRegular-e1Zx'; src: url('fonts/QuicksandbookobliqueRegular-e1Zx.otf') format('opentype'); }
+@font-face { font-family: 'QuicksandbookRegular-0gW4'; src: url('fonts/QuicksandbookRegular-0gW4.otf') format('opentype'); }
+@font-face { font-family: 'QuicksanddashRegular-oMwV'; src: url('fonts/QuicksanddashRegular-oMwV.otf') format('opentype'); }
+@font-face { font-family: 'QuicksandlightobliqueRegular-gBxY'; src: url('fonts/QuicksandlightobliqueRegular-gBxY.otf') format('opentype'); }
+@font-face { font-family: 'QuicksandlightRegular-WJpz'; src: url('fonts/QuicksandlightRegular-WJpz.otf') format('opentype'); }
+@font-face { font-family: 'TeachingPrintDotted-OVKlp'; src: url('fonts/TeachingPrintDotted-OVKlp.otf') format('opentype'); }
+@font-face { font-family: 'TeachingPrintDottedLined-Ea6W8'; src: url('fonts/TeachingPrintDottedLined-Ea6W8.otf') format('opentype'); }
+@font-face { font-family: 'Trace-lxy0'; src: url('fonts/Trace-lxy0.ttf') format('truetype'); }
 
-@font-face {
-  font-family: 'EspacoEducarPontilhada';
-  src: url('fonts/EspacoEducarPontilhada.ttf') format('truetype');
-}
 
 body {
   font-family: sans-serif;
