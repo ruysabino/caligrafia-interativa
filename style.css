@@ -1,0 +1,92 @@
+@font-face {
+  font-family: 'KGPrimaryDots';
+  src: url('fonts/KGPrimaryDots.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'EspacoEducarPontilhada';
+  src: url('fonts/EspacoEducarPontilhada.ttf') format('truetype');
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.a4 {
+  width: 21cm;
+  height: 29.7cm;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+textarea, select, input, button {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 16px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #337ab7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #286090;
+}
+
+.folha {
+  margin-top: 20px;
+  white-space: pre-wrap;
+  padding: 10px;
+  border: 1px dashed #ccc;
+}
+
+.linha-pontilhada {
+  margin-top: 15px;
+}
+
+.linha-treino {
+  margin-bottom: 10px;
+  line-height: 2;
+}
+
+.treino-guia {
+  color: #cccccc;
+  font-family: 'Courier New', monospace;
+}
+
+.treino-linha {
+  border-bottom: 1px solid #bbb;
+  height: 30px;
+  color: transparent;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .container {
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+  button {
+    display: none;
+  }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Folhas de Caligrafia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container a4">
+    <h1>Gerador de Folhas de Caligrafia</h1>
+    
+    <label for="input-texto">Texto:</label>
+    <textarea id="input-texto" placeholder="Digite aqui o texto..." rows="3"></textarea>
+
+    <label for="fonte">Fonte:</label>
+    <select id="fonte"></select>
+
+    <label for="tamanho-fonte">Tamanho da fonte: <span id="label-tamanho">26</span>px</label>
+    <input type="range" id="tamanho-fonte" min="16" max="48" value="26">
+
+    <label for="qtd-linhas">Quantidade de linhas:</label>
+    <input type="number" id="qtd-linhas" min="1" max="30" value="3">
+
+    <label for="tipo-treino">Tipo de treino:</label>
+    <select id="tipo-treino">
+      <option value="linha">Linha em branco</option>
+      <option value="guia">Texto cinza claro</option>
+      <option value="nenhum">Sem linha de treino</option>
+    </select>
+
+    <button onclick="gerarCaligrafia()">Gerar folha</button>
+    <button onclick="window.print()">Imprimir</button>
+
+    <div id="folha" class="folha"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
