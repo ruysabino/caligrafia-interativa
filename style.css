@@ -72,9 +72,11 @@ button:hover {
 
 .treino-linha {
   border-bottom: 1px solid #bbb;
-  height: 30px;
   color: transparent;
+  margin-bottom: 10px;
+  line-height: 1;
 }
+
 
 @media print {
   body {
