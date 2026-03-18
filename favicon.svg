@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="penG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F9CB42"/>
+      <stop offset="100%" stop-color="#BA7517"/>
+    </linearGradient>
+    <linearGradient id="inkG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9b8fff"/>
+      <stop offset="100%" stop-color="#6B5CE7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#1C1B2E"/>
+
+  <!-- Baseline -->
+  <line x1="4" y1="22" x2="28" y2="22" stroke="#7B6FF0" stroke-width="0.8" opacity="0.5"/>
+
+  <!-- Calligraphic "C" -->
+  <path d="M23 6 Q16 4, 11 9 Q6 14, 7 19 Q8 24, 13 26 Q18 28, 23 27"
+        fill="none" stroke="url(#inkG)" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Quill -->
+  <path d="M26 4 L15 26" fill="none" stroke="url(#penG)" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Barbs simplified -->
+  <path d="M26 4 Q28 7, 25 10" fill="none" stroke="#F9CB42" stroke-width="0.8" stroke-linecap="round" opacity="0.9"/>
+  <path d="M26 4 Q23 7, 21 10" fill="none" stroke="#F9CB42" stroke-width="0.8" stroke-linecap="round" opacity="0.9"/>
+  <!-- Nib -->
+  <path d="M15 26 L13 29 L17 27 Z" fill="#EF9F27"/>
+</svg>

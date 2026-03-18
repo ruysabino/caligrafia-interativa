@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="penGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F9CB42"/>
+      <stop offset="60%" stop-color="#EF9F27"/>
+      <stop offset="100%" stop-color="#BA7517"/>
+    </linearGradient>
+    <linearGradient id="inkGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9b8fff"/>
+      <stop offset="100%" stop-color="#6B5CE7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="96" fill="#1C1B2E"/>
+
+  <!-- Staff lines (pauta) -->
+  <line x1="64" y1="272" x2="448" y2="272" stroke="#ffffff" stroke-width="1.5" opacity="0.10"/>
+  <line x1="64" y1="312" x2="448" y2="312" stroke="#ffffff" stroke-width="1.5" opacity="0.10"/>
+  <line x1="64" y1="352" x2="448" y2="352" stroke="#ffffff" stroke-width="1.5" opacity="0.10"/>
+  <line x1="64" y1="392" x2="448" y2="392" stroke="#ffffff" stroke-width="1.5" opacity="0.10"/>
+  <!-- Baseline highlighted -->
+  <line x1="64" y1="352" x2="448" y2="352" stroke="#7B6FF0" stroke-width="2.5" opacity="0.45"/>
+
+  <!-- Calligraphic stroke — stylised "C" curve -->
+  <path d="M380 130 Q270 90, 190 165 Q120 235, 135 310 Q150 385, 215 420 Q285 455, 370 440"
+        fill="none" stroke="url(#inkGrad)" stroke-width="28"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  <!-- Thin entry hairline -->
+  <path d="M380 130 Q398 122, 408 132"
+        fill="none" stroke="url(#inkGrad)" stroke-width="5"
+        stroke-linecap="round" opacity="0.7"/>
+  <!-- Thin exit hairline -->
+  <path d="M370 440 Q388 448, 398 440"
+        fill="none" stroke="url(#inkGrad)" stroke-width="5"
+        stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Feather quill (pluma) diagonal -->
+  <!-- Quill shaft -->
+  <path d="M430 60 L240 410" fill="none" stroke="url(#penGrad)" stroke-width="7" stroke-linecap="round"/>
+  <!-- Right barbs -->
+  <path d="M430 60 Q448 88, 420 112 Q410 88, 398 116 Q386 92, 374 120 Q360 96, 350 124"
+        fill="none" stroke="#F9CB42" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <path d="M416 88 Q440 112, 412 134 Q402 112, 388 138 Q376 114, 362 140"
+        fill="none" stroke="#EF9F27" stroke-width="2" stroke-linecap="round" opacity="0.65"/>
+  <!-- Left barbs -->
+  <path d="M430 60 Q412 86, 402 110 Q392 86, 380 112 Q368 90, 358 116"
+        fill="none" stroke="#F9CB42" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <!-- Quill nib (bico) -->
+  <path d="M240 410 L226 445 L262 424 Z" fill="#EF9F27"/>
+  <!-- Nib split line -->
+  <path d="M240 410 L248 432" fill="none" stroke="#BA7517" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Ink dots (decorative splatter) -->
+  <circle cx="452" cy="285" r="5" fill="#9b8fff" opacity="0.55"/>
+  <circle cx="468" cy="308" r="3" fill="#9b8fff" opacity="0.35"/>
+  <circle cx="76" cy="262" r="3.5" fill="#9b8fff" opacity="0.30"/>
+  <circle cx="460" cy="330" r="2" fill="#7B6FF0" opacity="0.40"/>
+</svg>
