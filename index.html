@@ -1,42 +1,833 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="icon" type="image/png" href="favicon.png">
-  <head>
+<html lang="pt-BR">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Folhas de Caligrafia</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Caligrafia Interativa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset & tokens ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #1a1612;
+      --ink-2:    #4a433c;
+      --ink-3:    #8c847c;
+      --paper:    #faf7f2;
+      --paper-2:  #f2ede4;
+      --paper-3:  #e8e0d2;
+      --accent:   #c0392b;
+      --accent-2: #e8b4a0;
+      --accent-bg:#fdf0ec;
+      --guide:    #b5d4f4;
+      --panel-w:  300px;
+      --radius:   10px;
+      --font-ui:  'Nunito', sans-serif;
+      --font-display: 'DM Serif Display', serif;
+      --font-mono: 'DM Mono', monospace;
+      --shadow-sm: 0 1px 3px rgba(26,22,18,.08), 0 1px 2px rgba(26,22,18,.06);
+      --shadow-md: 0 4px 16px rgba(26,22,18,.10), 0 1px 4px rgba(26,22,18,.07);
+      --transition: 0.18s ease;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--paper-2);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      height: 52px;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+    .topbar-logo {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .topbar-logo .wordmark {
+      font-family: var(--font-display);
+      font-size: 19px;
+      color: var(--paper);
+      letter-spacing: .01em;
+    }
+    .topbar-logo .tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-3);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 0 16px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      letter-spacing: .01em;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink-3);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.08);
+      color: var(--paper);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(192,57,43,.35);
+    }
+    .btn-primary:hover {
+      background: #a93226;
+      box-shadow: 0 3px 12px rgba(192,57,43,.45);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,.10);
+      color: var(--paper-2);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.16);
+    }
+
+    /* Icon SVG inside buttons */
+    .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── App shell ── */
+    .app {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--panel-w);
+      flex-shrink: 0;
+      background: var(--paper);
+      border-right: 1px solid var(--paper-3);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--paper-3) transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 2px; }
+
+    .sidebar-section {
+      padding: 20px 20px 0;
+    }
+    .sidebar-section:last-child { padding-bottom: 24px; }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--paper-3);
+    }
+
+    /* ── Form controls ── */
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-2);
+      margin-bottom: 5px;
+      letter-spacing: .01em;
+    }
+
+    textarea, input[type="number"] {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--ink);
+      background: var(--paper-2);
+      border: 1px solid var(--paper-3);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      width: 100%;
+      resize: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    textarea:focus, input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+    }
+    textarea { line-height: 1.5; }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* Font picker cards */
+    .font-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .font-card {
+      background: var(--paper-2);
+      border: 1.5px solid var(--paper-3);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+      text-align: left;
+    }
+    .font-card:hover {
+      background: var(--accent-bg);
+      border-color: var(--accent-2);
+    }
+    .font-card.active {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.10);
+    }
+    .font-card .sample {
+      font-size: 22px;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .font-card .font-name {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-3);
+      letter-spacing: .05em;
+    }
+
+    /* Slider row */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--paper-3);
+      outline: none;
+      cursor: pointer;
+    }
+    .slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(192,57,43,.4);
+      transition: transform var(--transition);
+    }
+    .slider-row input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .slider-row input[type="range"]::-moz-range-thumb {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+    }
+    .slider-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink-2);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    /* Training type pills */
+    .pill-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--paper-3);
+      background: var(--paper-2);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .pill:hover {
+      background: var(--accent-bg);
+      border-color: var(--accent-2);
+    }
+    .pill.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.08);
+    }
+    .pill-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--paper-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+      transition: background var(--transition);
+    }
+    .pill.active .pill-icon {
+      background: rgba(192,57,43,.15);
+    }
+    .pill-label { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+    .pill-desc  { font-size: 11px; color: var(--ink-3); }
+
+    /* number + arrows */
+    .num-field {
+      display: flex;
+      align-items: center;
+      background: var(--paper-2);
+      border: 1px solid var(--paper-3);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .num-field:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.12);
+    }
+    .num-field input {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      text-align: center;
+      flex: 1;
+      box-shadow: none !important;
+    }
+    .num-btn {
+      width: 34px;
+      height: 36px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 17px;
+      color: var(--ink-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition), color var(--transition);
+      flex-shrink: 0;
+    }
+    .num-btn:hover { background: var(--paper-3); color: var(--ink); }
+
+    /* ── Preview area ── */
+    .preview-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--paper-2);
+    }
+
+    .preview-toolbar {
+      height: 44px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--paper-3);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .preview-toolbar-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      flex: 1;
+    }
+
+    .zoom-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--paper-2);
+      border: 1px solid var(--paper-3);
+      border-radius: 6px;
+      padding: 0 6px;
+      height: 30px;
+    }
+    .zoom-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--ink-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      transition: background var(--transition), color var(--transition);
+      line-height: 1;
+    }
+    .zoom-btn:hover { background: var(--paper-3); color: var(--ink); }
+    .zoom-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-2);
+      min-width: 34px;
+      text-align: center;
+    }
+
+    .preview-scroll {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 24px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--paper-3) transparent;
+    }
+    .preview-scroll::-webkit-scrollbar { width: 6px; }
+    .preview-scroll::-webkit-scrollbar-track { background: transparent; }
+    .preview-scroll::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 3px; }
+
+    /* ── A4 Sheet ── */
+    .sheet-wrap {
+      transform-origin: top center;
+    }
+
+    .sheet {
+      width: 794px;   /* A4 at 96dpi */
+      min-height: 1123px;
+      background: #fff;
+      box-shadow: var(--shadow-md), 0 20px 60px rgba(26,22,18,.12);
+      border-radius: 2px;
+      padding: 64px 72px;
+      position: relative;
+      font-family: var(--font-display);
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid var(--paper-3);
+    }
+    .sheet-title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      color: var(--ink-3);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .sheet-date {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ink-3);
+    }
+
+    /* Lines on the sheet */
+    .sheet-lines { display: flex; flex-direction: column; }
+
+    .line-block {
+      margin-bottom: 24px;
+    }
+
+    .text-line {
+      position: relative;
+      display: block;
+      line-height: 1;
+      padding-bottom: 4px;
+    }
+
+    /* Guide text (tipo "guia") */
+    .guide-text {
+      color: #d8d0c4;
+      display: block;
+    }
+
+    /* Practice line drawn below */
+    .practice-line {
+      width: 100%;
+      height: 1px;
+      background: var(--guide);
+      display: block;
+      margin-top: 6px;
+    }
+
+    /* Bottom rule lines for "linha em branco" */
+    .blank-line {
+      width: 100%;
+      height: 1px;
+      background: #c8dff7;
+      display: block;
+      margin-bottom: 0;
+    }
+
+    /* Empty placeholder state */
+    .sheet-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 600px;
+      gap: 14px;
+      opacity: .55;
+    }
+    .sheet-empty-icon {
+      font-size: 40px;
+      line-height: 1;
+    }
+    .sheet-empty-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 17px;
+      color: var(--ink-3);
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      .topbar, .sidebar, .preview-toolbar, .zoom-control { display: none !important; }
+      body, html { overflow: visible !important; height: auto !important; background: white; }
+      .app { display: block; }
+      .preview-area { display: block; overflow: visible; }
+      .preview-scroll { overflow: visible; padding: 0; display: block; }
+      .sheet-wrap { transform: none !important; }
+      .sheet {
+        width: 100%;
+        min-height: unset;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 20mm 20mm 20mm 20mm;
+        page-break-after: always;
+      }
+    }
+
+    /* ── Divider ── */
+    .sidebar-divider {
+      height: 1px;
+      background: var(--paper-3);
+      margin: 4px 0 20px;
+    }
+
+    /* status badge */
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #2ecc71;
+      box-shadow: 0 0 5px #2ecc71;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
-  <div class="container a4">
-    <h1>Gerador de Folhas de Caligrafia</h1>
-    
-    <label for="input-texto">Texto:</label>
-    <textarea id="input-texto" placeholder="Digite aqui o texto..." rows="3"></textarea>
 
-    <label for="fonte">Fonte:</label>
-    <select id="fonte"></select>
-
-    <label for="tamanho-fonte">Tamanho da fonte: <span id="label-tamanho">26</span>px</label>
-    <input type="range" id="tamanho-fonte" min="16" max="48" value="26">
-
-    <label for="qtd-linhas">Quantidade de linhas:</label>
-    <input type="number" id="qtd-linhas" min="1" max="30" value="3">
-
-    <label for="tipo-treino">Tipo de treino:</label>
-    <select id="tipo-treino">
-      <option value="linha">Linha em branco</option>
-      <option value="guia">Texto cinza claro</option>
-      <option value="nenhum">Sem linha de treino</option>
-    </select>
-
-    <button onclick="gerarCaligrafia()">Gerar folha</button>
-    <button onclick="window.print()">Imprimir</button>
-
-    <div id="folha" class="folha"></div>
+<!-- ── Top Bar ── -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <span class="wordmark">Caligrafia</span>
+    <span class="tag">Gerador de folhas</span>
   </div>
+  <div class="topbar-actions">
+    <button class="btn btn-secondary" onclick="gerarCaligrafia()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1v10M3 7l5 5 5-5"/><path d="M1 14h14"/></svg>
+      Gerar folha
+    </button>
+    <button class="btn btn-ghost" onclick="window.print()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="1" width="10" height="7" rx="1"/><path d="M3 8H1v6h14V8h-2"/><rect x="4" y="11" width="8" height="4"/><circle cx="12" cy="5" r=".5" fill="currentColor"/></svg>
+      Imprimir
+    </button>
+  </div>
+</header>
 
-  <script src="script.js"></script>
+<!-- ── App Shell ── -->
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+
+    <!-- Texto -->
+    <div class="sidebar-section">
+      <p class="section-title">Texto</p>
+      <div class="field">
+        <label for="input-texto">Conteúdo para praticar</label>
+        <textarea id="input-texto" rows="4" placeholder="Ex: A raposa marrom saltou sobre o cão preguiçoso..."></textarea>
+      </div>
+    </div>
+
+    <!-- Fonte -->
+    <div class="sidebar-section">
+      <p class="section-title">Fonte caligráfica</p>
+      <div class="font-grid" id="font-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Tamanho -->
+    <div class="sidebar-section">
+      <p class="section-title">Tamanho</p>
+      <div class="field">
+        <label>Tamanho da fonte</label>
+        <div class="slider-row">
+          <input type="range" id="tamanho-fonte" min="16" max="52" value="28" oninput="syncFontSize(this.value)">
+          <span class="slider-value" id="label-tamanho">28px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Linhas -->
+    <div class="sidebar-section">
+      <p class="section-title">Quantidade de linhas</p>
+      <div class="field">
+        <div class="num-field">
+          <button class="num-btn" onclick="changeLines(-1)">−</button>
+          <input type="number" id="qtd-linhas" min="1" max="30" value="4">
+          <button class="num-btn" onclick="changeLines(+1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tipo de treino -->
+    <div class="sidebar-section">
+      <p class="section-title">Tipo de treino</p>
+      <div class="pill-group" id="tipo-group">
+        <div class="pill active" data-value="guia" onclick="selectTipo(this)">
+          <div class="pill-icon">✦</div>
+          <div>
+            <div class="pill-label">Texto guia</div>
+            <div class="pill-desc">Letra cinza para decalcar</div>
+          </div>
+        </div>
+        <div class="pill" data-value="linha" onclick="selectTipo(this)">
+          <div class="pill-icon">━</div>
+          <div>
+            <div class="pill-label">Linha em branco</div>
+            <div class="pill-desc">Pauta azul para escrever</div>
+          </div>
+        </div>
+        <div class="pill" data-value="nenhum" onclick="selectTipo(this)">
+          <div class="pill-icon">○</div>
+          <div>
+            <div class="pill-label">Papel limpo</div>
+            <div class="pill-desc">Sem guias, livre</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="padding-top: 8px;">
+      <button class="btn btn-primary" style="width:100%; justify-content:center; height:40px; font-size:14px;" onclick="gerarCaligrafia()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M6 8h4M8 6v4"/></svg>
+        Gerar folha
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ── Preview ── -->
+  <main class="preview-area">
+
+    <div class="preview-toolbar">
+      <span class="preview-toolbar-label">
+        <span class="status-dot"></span>
+        &nbsp; Preview — A4
+      </span>
+      <div class="zoom-control">
+        <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+        <span class="zoom-label" id="zoom-label">75%</span>
+        <button class="zoom-btn" onclick="changeZoom(+10)">+</button>
+      </div>
+    </div>
+
+    <div class="preview-scroll" id="preview-scroll">
+      <div class="sheet-wrap" id="sheet-wrap" style="transform: scale(0.75);">
+        <div class="sheet" id="folha">
+          <div class="sheet-empty">
+            <div class="sheet-empty-icon">✒</div>
+            <div class="sheet-empty-text">Configure e clique em "Gerar folha"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  /* ── Fontes disponíveis ── */
+  const FONTES = [
+    { nome: 'Sacramento',    url: 'Sacramento',    sample: 'Aa', familia: "'Sacramento', cursive" },
+    { nome: 'Dancing Script',url: 'Dancing+Script',sample: 'Aa', familia: "'Dancing Script', cursive" },
+    { nome: 'Pacifico',      url: 'Pacifico',      sample: 'Aa', familia: "'Pacifico', cursive" },
+    { nome: 'Satisfy',       url: 'Satisfy',       sample: 'Aa', familia: "'Satisfy', cursive" },
+    { nome: 'Pinyon Script', url: 'Pinyon+Script', sample: 'Aa', familia: "'Pinyon Script', cursive" },
+    { nome: 'Great Vibes',   url: 'Great+Vibes',   sample: 'Aa', familia: "'Great Vibes', cursive" },
+  ];
+
+  let fonteSelecionada = FONTES[0];
+  let zoom = 75;
+
+  /* Carregar fontes do Google */
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=' +
+    FONTES.map(f => f.url + ':wght@400').join('&family=') + '&display=swap';
+  document.head.appendChild(link);
+
+  /* Renderizar cards de fonte */
+  function renderFontGrid() {
+    const grid = document.getElementById('font-grid');
+    grid.innerHTML = FONTES.map((f, i) => `
+      <div class="font-card ${i === 0 ? 'active' : ''}" onclick="selectFont(${i})" id="fc-${i}">
+        <span class="sample" style="font-family:${f.familia}">${f.sample}</span>
+        <span class="font-name">${f.nome}</span>
+      </div>
+    `).join('');
+  }
+
+  function selectFont(idx) {
+    fonteSelecionada = FONTES[idx];
+    document.querySelectorAll('.font-card').forEach((c, i) => {
+      c.classList.toggle('active', i === idx);
+    });
+  }
+
+  /* Tipo de treino */
+  let tipoTreino = 'guia';
+  function selectTipo(el) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    tipoTreino = el.dataset.value;
+  }
+
+  /* Tamanho */
+  function syncFontSize(v) {
+    document.getElementById('label-tamanho').textContent = v + 'px';
+  }
+
+  /* Linhas */
+  function changeLines(delta) {
+    const input = document.getElementById('qtd-linhas');
+    const v = Math.min(30, Math.max(1, +input.value + delta));
+    input.value = v;
+  }
+
+  /* Zoom */
+  function changeZoom(delta) {
+    zoom = Math.min(150, Math.max(40, zoom + delta));
+    document.getElementById('zoom-label').textContent = zoom + '%';
+    document.getElementById('sheet-wrap').style.transform = `scale(${zoom / 100})`;
+    /* Ajusta altura do wrapper para não colapsar com scale */
+    const wrap = document.getElementById('sheet-wrap');
+    const sheet = document.getElementById('folha');
+    const sh = sheet.offsetHeight;
+    wrap.style.height = (sh * zoom / 100) + 'px';
+    wrap.style.width  = (794 * zoom / 100) + 'px';
+  }
+
+  /* ── Gerar folha ── */
+  function gerarCaligrafia() {
+    const texto    = document.getElementById('input-texto').value.trim() || 'Pratique sua caligrafia aqui...';
+    const tamanho  = document.getElementById('tamanho-fonte').value;
+    const qtd      = parseInt(document.getElementById('qtd-linhas').value) || 4;
+    const tipo     = tipoTreino;
+    const familia  = fonteSelecionada.familia;
+    const hoje     = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+    const folha    = document.getElementById('folha');
+
+    let html = `
+      <div class="sheet-header">
+        <span class="sheet-title">Folha de caligrafia</span>
+        <span class="sheet-date">${hoje}</span>
+      </div>
+      <div class="sheet-lines">
+    `;
+
+    for (let i = 0; i < qtd; i++) {
+      const lh = Math.round(parseInt(tamanho) * 1.55);
+      html += `<div class="line-block">`;
+
+      if (tipo === 'guia') {
+        html += `
+          <span class="text-line guide-text" style="font-size:${tamanho}px; font-family:${familia}; line-height:${lh}px;">${escapeHtml(texto)}</span>
+          <span class="practice-line"></span>
+        `;
+      } else if (tipo === 'linha') {
+        html += `
+          <span class="text-line" style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
+          <span class="blank-line"></span>
+        `;
+      } else {
+        html += `
+          <span class="text-line" style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
+        `;
+      }
+
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+    folha.innerHTML = html;
+
+    /* Reajusta zoom wrapper */
+    setTimeout(changeZoom.bind(null, 0), 50);
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* ── Init ── */
+  renderFontGrid();
+  changeZoom(0);
+</script>
 </body>
 </html>
