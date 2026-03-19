@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -136,6 +138,62 @@
     .sheet-empty-text { font-family: var(--font-display); font-style: italic; font-size: 17px; color: var(--ink-3); }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #2ecc71; box-shadow: 0 0 5px #2ecc71; display: inline-block; }
 
+    /* ── Export overlay (spinner) ── */
+    .export-overlay { display:none; position:fixed; inset:0; background:rgba(26,22,18,.55); z-index:999; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+    .export-overlay.active { display:flex; }
+    .export-spinner { width:36px; height:36px; border:3px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation: spin .7s linear infinite; }
+    .export-msg { font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,.85); letter-spacing:.06em; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── Export dropdown ── */
+    .export-wrap { position:relative; }
+    .export-menu { display:none; position:absolute; top:calc(100% + 6px); right:0; background:var(--ink); border:1px solid rgba(255,255,255,.12); border-radius:8px; overflow:hidden; min-width:150px; z-index:50; }
+    .export-menu.open { display:block; }
+    .export-item { display:flex; align-items:center; gap:8px; padding:9px 14px; font-family:var(--font-ui); font-size:13px; font-weight:600; color:var(--paper-2); cursor:pointer; transition:background var(--tr); border:none; background:transparent; width:100%; }
+    .export-item:hover { background:rgba(255,255,255,.10); }
+    .export-item svg { width:13px; height:13px; flex-shrink:0; opacity:.7; }
+
+    /* ── Pauta Séyès ── */
+    .seyès-block { position:relative; margin-bottom:20px; }
+    .seyès-lines {
+      width:100%; height:40px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0px,
+          transparent 7px,
+          #c8dff7 7px,
+          #c8dff7 8px,
+          transparent 8px,
+          transparent 15px,
+          #c8dff7 15px,
+          #c8dff7 16px,
+          transparent 16px,
+          transparent 23px,
+          #5ba3e0 23px,
+          #5ba3e0 24px
+        );
+      display:block;
+    }
+    .seyès-margin {
+      position:absolute; top:0; bottom:0; left:60px;
+      border-left:1.5px solid #e88080;
+      pointer-events:none;
+    }
+    .seyès-guide {
+      position:absolute; top:2px; left:0; right:0;
+      font-size:inherit; color:#d8d0c4;
+      padding:0 6px 0 66px;
+      line-height:23px;
+      white-space:nowrap; overflow:hidden;
+    }
+
+    /* ── RTL sheet ── */
+    .sheet.rtl { direction:rtl; text-align:right; }
+    .sheet.rtl .sheet-header { flex-direction:row-reverse; }
+    .sheet.rtl .seyès-margin { left:auto; right:60px; border-left:none; border-right:1.5px solid #e88080; }
+    .sheet.rtl .seyès-guide { padding:0 66px 0 6px; }
+
     @media print {
       .topbar, .sidebar, .preview-toolbar { display: none !important; }
       body, html { overflow: visible !important; height: auto !important; background: white; }
@@ -187,6 +245,18 @@
         <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#FFCE00"/><rect width="24" height="12" fill="#DD0000"/><rect width="24" height="6" fill="#000"/></svg>
         <span class="lang-tip">Deutsch</span>
       </button>
+      <!-- Árabe (separador) -->
+      <span style="width:1px;height:16px;background:rgba(255,255,255,.15);margin:0 2px;display:inline-block;"></span>
+      <!-- Arábia Saudita 🇸🇦 -->
+      <button class="lang-btn" data-lang="ar" onclick="selectLang('ar')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#006C35"/><rect y="7" width="24" height="4" fill="#fff" opacity=".18"/><text x="12" y="13" text-anchor="middle" font-size="7" fill="#fff" font-family="serif">العربية</text></svg>
+        <span class="lang-tip">العربية</span>
+      </button>
+      <!-- Israel 🇮🇱 -->
+      <button class="lang-btn" data-lang="he" onclick="selectLang('he')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#fff"/><rect y="2.5" width="24" height="3" fill="#0038B8"/><rect y="12.5" width="24" height="3" fill="#0038B8"/><polygon points="12,6.5 14.6,11 9.4,11" fill="none" stroke="#0038B8" stroke-width="1"/><polygon points="12,11.5 14.6,7 9.4,7" fill="none" stroke="#0038B8" stroke-width="1"/></svg>
+        <span class="lang-tip">עברית</span>
+      </button>
     </div>
   </div>
 
@@ -199,8 +269,32 @@
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="1" width="10" height="7" rx="1"/><path d="M3 8H1v6h14V8h-2"/><rect x="4" y="11" width="8" height="4"/><circle cx="12" cy="5" r=".5" fill="currentColor"/></svg>
       <span id="btn-print-top">Imprimir</span>
     </button>
+    <!-- Export dropdown -->
+    <div class="export-wrap" id="export-wrap">
+      <button class="btn btn-ghost" onclick="toggleExportMenu(event)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1v10M3 7l5 5 5-5"/><path d="M1 14h14"/></svg>
+        <span id="btn-export-top">Exportar</span>
+        <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width:10px;height:6px;margin-left:2px;"><path d="M1 1l4 4 4-4"/></svg>
+      </button>
+      <div class="export-menu" id="export-menu">
+        <button class="export-item" onclick="exportPNG()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M4 10l2-3 2 2 2-3 2 4"/></svg>
+          PNG
+        </button>
+        <button class="export-item" onclick="exportPDF()">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="1" width="9" height="14" rx="1"/><path d="M11 1l3 3v11"/><path d="M11 1v3h3"/><path d="M5 7h4M5 10h3"/></svg>
+          PDF
+        </button>
+      </div>
+    </div>
   </div>
 </header>
+
+<!-- Export overlay -->
+<div class="export-overlay" id="export-overlay">
+  <div class="export-spinner"></div>
+  <div class="export-msg" id="export-msg">A gerar ficheiro...</div>
+</div>
 
 <div class="app">
   <aside class="sidebar">
@@ -261,6 +355,10 @@
         <div class="pill" data-value="nenhum" onclick="selectTipo(this)">
           <div class="pill-icon">○</div>
           <div><div class="pill-label" id="lbl-tn">Papel limpo</div><div class="pill-desc" id="lbl-tn-d">Sem guias, livre</div></div>
+        </div>
+        <div class="pill" data-value="seyes" id="pill-seyes" onclick="selectTipo(this)" style="display:none;">
+          <div class="pill-icon">⊟</div>
+          <div><div class="pill-label" id="lbl-ts">Pauta Séyès</div><div class="pill-desc" id="lbl-ts-d">Formato caderno francês</div></div>
         </div>
       </div>
     </div>
@@ -530,7 +628,11 @@ function selFont(i){
 }
 
 /* ── controls ── */
-function selectTipo(el){ document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); tipo=el.dataset.value; }
+function selectTipo(el){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  tipo=el.dataset.value;
+}
 function syncFontSize(v){ document.getElementById('label-tamanho').textContent=v+'px'; }
 function changeLines(d){ const i=document.getElementById('qtd-linhas'); i.value=Math.min(30,Math.max(1,+i.value+d)); }
 function changeZoom(d){
@@ -542,29 +644,184 @@ function changeZoom(d){
   w.style.width=(794*zoom/100)+'px';
 }
 
+/* ── Pauta Séyès: visível só quando lang===fr ── */
+function updateSeyesPill(){
+  const p = document.getElementById('pill-seyes');
+  if(!p) return;
+  if(lang==='fr'){ p.style.display=''; }
+  else {
+    p.style.display='none';
+    if(tipo==='seyes'){ tipo='guia'; document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active')); document.querySelector('.pill[data-value="guia"]').classList.add('active'); }
+  }
+}
+
+/* ── RTL: aplicar/remover dir ao folha ── */
+const RTL_LANGS = new Set(['ar','he']);
+function applyRTL(){
+  const folha = document.getElementById('folha');
+  if(RTL_LANGS.has(lang)){ folha.classList.add('rtl'); folha.setAttribute('dir','rtl'); }
+  else { folha.classList.remove('rtl'); folha.removeAttribute('dir'); }
+}
+
 /* ── generate ── */
 function gerarCaligrafia(){
-  const t   = T[lang];
+  const t   = T[lang] || T['pt-PT'];
   const txt = document.getElementById('input-texto').value.trim() || (modo==='forma' ? t.defForma : t.defCursiva);
   const sz  = document.getElementById('tamanho-fonte').value;
   const qtd = parseInt(document.getElementById('qtd-linhas').value)||4;
   const lh  = Math.round(parseInt(sz)*1.6);
   const gp  = Math.max(1,Math.round(parseInt(sz)*.06));
   const hoje= new Date().toLocaleDateString(t.locale,{day:'2-digit',month:'long',year:'numeric'});
-  let html  = `<div class="sheet-header"><span class="sheet-title">${t.shTitle}</span><span class="sheet-date">${hoje}</span></div><div class="sheet-lines">`;
+  const isRTL = RTL_LANGS.has(lang);
+  const folha = document.getElementById('folha');
+
+  let html = `<div class="sheet-header"><span class="sheet-title">${t.shTitle}</span><span class="sheet-date">${hoje}</span></div><div class="sheet-lines">`;
+
   for(let i=0;i<qtd;i++){
-    html+=`<div class="line-block">`;
-    if(tipo==='guia')        html+=`<span class="text-line guide-text" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};line-height:${lh}px;">${esc(txt)}</span><span class="practice-line" style="height:${gp}px;"></span>`;
-    else if(tipo==='linha')  html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span><span class="blank-line" style="height:${gp}px;"></span>`;
-    else                     html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span>`;
-    html+=`</div>`;
+    if(tipo==='seyes'){
+      /* Pauta Séyès: bloco CSS com guia opcional */
+      html+=`<div class="seyès-block" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};">
+        <span class="seyès-lines" style="height:${Math.max(32,lh)}px;"></span>
+        <span class="seyès-margin"></span>
+        ${txt ? `<span class="seyès-guide" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};">${esc(txt)}</span>` : ''}
+      </div>`;
+    } else {
+      html+=`<div class="line-block">`;
+      if(tipo==='guia')       html+=`<span class="text-line guide-text" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};line-height:${lh}px;direction:${isRTL?'rtl':'ltr'};text-align:${isRTL?'right':'left'};">${esc(txt)}</span><span class="practice-line" style="height:${gp}px;"></span>`;
+      else if(tipo==='linha') html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span><span class="blank-line" style="height:${gp}px;"></span>`;
+      else                    html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span>`;
+      html+=`</div>`;
+    }
   }
-  html+=`</div><div style="position:absolute;bottom:28px;right:40px;font-family:var(--font-mono);font-size:9px;color:#ccc;letter-spacing:.06em;">${fonte.n} · ${lang}</div>`;
-  document.getElementById('folha').innerHTML=html;
+
+  html+=`</div><div style="position:absolute;bottom:28px;${isRTL?'left':'right'}:40px;font-family:var(--font-mono);font-size:9px;color:#ccc;letter-spacing:.06em;">${fonte.n} · ${lang}</div>`;
+  folha.innerHTML=html;
+  applyRTL();
   setTimeout(()=>changeZoom(0),50);
 }
 
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Export overlay ── */
+function showOverlay(msg){ const o=document.getElementById('export-overlay'); document.getElementById('export-msg').textContent=msg||'A gerar ficheiro...'; o.classList.add('active'); }
+function hideOverlay(){ document.getElementById('export-overlay').classList.remove('active'); }
+
+/* ── Export PNG ── */
+async function exportPNG(){
+  closeExportMenu();
+  const t = T[lang]||T['pt-PT'];
+  const el = document.getElementById('folha');
+  if(!el.querySelector('.sheet-header')){ alert(t.empty||'Gere a folha primeiro.'); return; }
+  showOverlay('A gerar PNG…');
+  await document.fonts.ready;
+  try {
+    const canvas = await html2canvas(el,{ scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+    canvas.toBlob(blob=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=`caligrafia-${lang}.png`;
+      a.click(); URL.revokeObjectURL(a.href);
+      hideOverlay();
+    },'image/png');
+  } catch(e){ hideOverlay(); console.error(e); }
+}
+
+/* ── Export PDF ── */
+async function exportPDF(){
+  closeExportMenu();
+  const t = T[lang]||T['pt-PT'];
+  const el = document.getElementById('folha');
+  if(!el.querySelector('.sheet-header')){ alert(t.empty||'Gere a folha primeiro.'); return; }
+  showOverlay('A gerar PDF…');
+  await document.fonts.ready;
+  try {
+    const canvas = await html2canvas(el,{ scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+    const img = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    pdf.addImage(img,'PNG',0,0,210,297);
+    pdf.save(`caligrafia-${lang}.pdf`);
+    hideOverlay();
+  } catch(e){ hideOverlay(); console.error(e); }
+}
+
+/* ── Export dropdown toggle ── */
+function toggleExportMenu(e){ e.stopPropagation(); document.getElementById('export-menu').classList.toggle('open'); }
+function closeExportMenu(){ document.getElementById('export-menu').classList.remove('open'); }
+document.addEventListener('click', closeExportMenu);
+
+/* ── Adicionar strings RTL ao T ── */
+T['ar'] = { htmlLang:'ar', tag:'مولّد الأوراق', btnGerar:'توليد الورقة', btnPrint:'طباعة',
+  sTexto:'النص', sTextoSub:'المحتوى للتمرين', ph:'مثال: بسم الله الرحمن الرحيم...',
+  sModo:'وضع الكتابة', mCursiva:'خط يدوي', mForma:'حروف مطبوعة',
+  sFonte:'الخط', sTam:'الحجم', sTamSub:'حجم الخط', sLinhas:'عدد الأسطر',
+  sTreino:'نوع التمرين', tg:'نص توجيهي', tgD:'نص رمادي للتتبع',
+  tl:'سطر فارغ', tlD:'سطر أزرق للكتابة', tn:'ورقة نظيفة', tnD:'بدون توجيه',
+  empty:'اضبط الإعدادات وانقر "توليد الورقة"', shTitle:'ورقة تدريب الخط',
+  descCursiva:'خط النسخ — النموذج الأكاديمي العربي. مناسب للمرحلة الابتدائية.',
+  descForma:'الحروف المطبوعة بأشكالها البسيطة. مناسب لمرحلة ما قبل المدرسة.',
+  defCursiva:'بسم الله الرحمن الرحيم. الحمد لله رب العالمين.',
+  defForma:'أ ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي',
+  locale:'ar-SA', btnExport:'تصدير', ts:'خط سيييس', tsD:'تنسيق الدفتر الفرنسي' };
+
+T['he'] = { htmlLang:'he', tag:'מחולל דפי כתיבה', btnGerar:'צור גיליון', btnPrint:'הדפסה',
+  sTexto:'טקסט', sTextoSub:'תוכן לתרגול', ph:'לדוגמה: שלום עולם...',
+  sModo:'מצב כתיבה', mCursiva:'כתב יד', mForma:'אותיות דפוס',
+  sFonte:'גופן', sTam:'גודל', sTamSub:'גודל גופן', sLinhas:'מספר שורות',
+  sTreino:'סוג תרגול', tg:'טקסט מנחה', tgD:'אפור להעתקה',
+  tl:'שורה ריקה', tlD:'שורת כתיבה כחולה', tn:'דף נקי', tnD:'ללא קווים',
+  empty:'הגדר ולחץ "צור גיליון"', shTitle:'גיליון אימון כתיבה',
+  descCursiva:'כתב יד עברי — דגם בי"ס (אותיות כתב עגול). מתאים לכיתות א-ג.',
+  descForma:'אותיות דפוס בסיסיות. מתאים לגן וכיתה א.',
+  defCursiva:'שלום עולם. ברוך הבא לתרגול הכתיבה.',
+  defForma:'א ב ג ד ה ו ז ח ט י כ ל מ נ ס ע פ צ ק ר ש ת',
+  locale:'he-IL', btnExport:'ייצוא', ts:'שורת סייס', tsD:'פורמט מחברת צרפתי' };
+
+/* ── Fontes RTL no catálogo C ── */
+C['ar'] = { cursiva:[
+  {n:'Amiri',             u:'Amiri',              s:'أبج', f:"'Amiri',serif",              w:'400', b:'↗', d:'Naskh clássico para educação — suporta todos os diacríticos (tashkeel)'},
+  {n:'Scheherazade New',  u:'Scheherazade+New',    s:'أبج', f:"'Scheherazade New',serif",   w:'400', b:'↗', d:'Desenhada para educação (SIL) — equivalente árabe do Andika'},
+  {n:'Noto Naskh Arabic', u:'Noto+Naskh+Arabic',   s:'أبج', f:"'Noto Naskh Arabic',serif",  w:'400', b:null, d:'Google Fonts — boa cobertura e múltiplos pesos'},
+  {n:'Lateef',            u:'Lateef',              s:'أبج', f:"'Lateef',serif",              w:'400', b:null, d:'Naskh formal, espaçamento generoso'},
+], forma:[
+  {n:'Amiri',             u:'Amiri',              s:'أبج', f:"'Amiri',serif",              w:'400', b:'↗', d:'Naskh legível para iniciantes'},
+  {n:'Noto Naskh Arabic', u:'Noto+Naskh+Arabic',   s:'أبج', f:"'Noto Naskh Arabic',serif",  w:'400', b:null, d:'Multi-peso, ótimo para letra impressa'},
+  {n:'Cairo',             u:'Cairo',               s:'أبج', f:"'Cairo',sans-serif",          w:'400', b:null, d:'Sans-serif moderno, bilíngue árabe-latino'},
+  {n:'Tajawal',           u:'Tajawal',             s:'أبج', f:"'Tajawal',sans-serif",         w:'400', b:null, d:'Leve e moderno para crianças'},
+]};
+
+C['he'] = { cursiva:[
+  {n:'Playpen Sans Hebrew',u:'Playpen+Sans+Hebrew', s:'אבג', f:"'Playpen Sans Hebrew',sans-serif",w:'400', b:'↗', d:'TypeTogether × Google — informal e legível, ideal para treino'},
+  {n:'Frank Ruhl Libre',   u:'Frank+Ruhl+Libre',   s:'אבג', f:"'Frank Ruhl Libre',serif",     w:'400', b:null, d:'Serif clássica hebraica, estilo formal'},
+  {n:'Heebo',              u:'Heebo',              s:'אבג', f:"'Heebo',sans-serif",            w:'400', b:null, d:'Sans-serif moderna, boa para iniciantes'},
+  {n:'Rubik',              u:'Rubik',              s:'אבג', f:"'Rubik',sans-serif",            w:'400', b:null, d:'Arredondada e legível'},
+], forma:[
+  {n:'Heebo',              u:'Heebo',              s:'אבג', f:"'Heebo',sans-serif",            w:'400', b:'↗', d:'Forma limpa, recomendada para letra de forma'},
+  {n:'Rubik',              u:'Rubik',              s:'אבג', f:"'Rubik',sans-serif",            w:'400', b:null, d:'Geométrica e arredondada'},
+  {n:'Assistant',          u:'Assistant',          s:'אבג', f:"'Assistant',sans-serif",        w:'400', b:null, d:'Neutra e de alta legibilidade'},
+  {n:'Frank Ruhl Libre',   u:'Frank+Ruhl+Libre',   s:'אבג', f:"'Frank Ruhl Libre',serif",     w:'400', b:null, d:'Clássica com grande legibilidade'},
+]};
+
+/* ── Patch selectLang para RTL e Séyès ── */
+const _origSelectLang = selectLang;
+selectLang = function(l){
+  _origSelectLang(l);
+  /* Traduzir botão export */
+  const t = T[l]||T['pt-PT'];
+  const eb = document.getElementById('btn-export-top');
+  if(eb) eb.textContent = t.btnExport||'Exportar';
+  /* Traduzir opção Séyès */
+  const ls = document.getElementById('lbl-ts');
+  const lsd = document.getElementById('lbl-ts-d');
+  if(ls) ls.textContent  = t.ts  || 'Pauta Séyès';
+  if(lsd) lsd.textContent = t.tsD || 'Formato caderno francês';
+  /* Sidebar dir */
+  const sidebar = document.querySelector('.sidebar');
+  if(RTL_LANGS.has(l)){ sidebar.setAttribute('dir','rtl'); }
+  else { sidebar.removeAttribute('dir'); }
+  updateSeyesPill();
+  applyRTL();
+};
 
 /* ── init ── */
 preload();
