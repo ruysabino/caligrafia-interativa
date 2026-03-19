@@ -6,1045 +6,570 @@
   <title>Caligrafia Interativa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&family=Playwrite+PT:wght@100..400&family=Playwrite+PT+Guides&family=Andika&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ── Reset & tokens ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --ink:      #1a1612;
-      --ink-2:    #4a433c;
-      --ink-3:    #8c847c;
-      --paper:    #faf7f2;
-      --paper-2:  #f2ede4;
-      --paper-3:  #e8e0d2;
-      --accent:   #c0392b;
-      --accent-2: #e8b4a0;
-      --accent-bg:#fdf0ec;
-      --guide:    #b5d4f4;
-      --panel-w:  300px;
-      --radius:   10px;
-      --font-ui:  'Nunito', sans-serif;
+      --ink: #1a1612; --ink-2: #4a433c; --ink-3: #8c847c;
+      --paper: #faf7f2; --paper-2: #f2ede4; --paper-3: #e8e0d2;
+      --accent: #c0392b; --accent-2: #e8b4a0; --accent-bg: #fdf0ec;
+      --guide: #b5d4f4; --panel-w: 308px; --radius: 10px;
+      --font-ui: 'Nunito', sans-serif;
       --font-display: 'DM Serif Display', serif;
       --font-mono: 'DM Mono', monospace;
-      --shadow-sm: 0 1px 3px rgba(26,22,18,.08), 0 1px 2px rgba(26,22,18,.06);
       --shadow-md: 0 4px 16px rgba(26,22,18,.10), 0 1px 4px rgba(26,22,18,.07);
-      --transition: 0.18s ease;
+      --tr: 0.18s ease;
     }
-
     html, body { height: 100%; overflow: hidden; }
+    body { font-family: var(--font-ui); background: var(--paper-2); color: var(--ink); display: flex; flex-direction: column; }
 
-    body {
-      font-family: var(--font-ui);
-      background: var(--paper-2);
-      color: var(--ink);
-      display: flex;
-      flex-direction: column;
-    }
+    /* topbar */
+    .topbar { height: 52px; background: var(--ink); display: flex; align-items: center; justify-content: space-between; padding: 0 18px; flex-shrink: 0; z-index: 10; }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .wordmark { font-family: var(--font-display); font-size: 19px; color: var(--paper); }
+    .tag { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; }
 
-    /* ── Top bar ── */
-    .topbar {
-      height: 52px;
-      background: var(--ink);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 10;
-    }
-    .topbar-logo {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-    }
-    .topbar-logo .wordmark {
-      font-family: var(--font-display);
-      font-size: 19px;
-      color: var(--paper);
-      letter-spacing: .01em;
-    }
-    .topbar-logo .tag {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--ink-3);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-    .topbar-actions {
-      display: flex;
-      gap: 8px;
-    }
-    .btn {
-      font-family: var(--font-ui);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      border-radius: 6px;
-      padding: 0 16px;
-      height: 34px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-      letter-spacing: .01em;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-ghost {
-      background: transparent;
-      color: var(--ink-3);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .btn-ghost:hover {
-      background: rgba(255,255,255,.08);
-      color: var(--paper);
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(192,57,43,.35);
-    }
-    .btn-primary:hover {
-      background: #a93226;
-      box-shadow: 0 3px 12px rgba(192,57,43,.45);
-    }
-    .btn-secondary {
-      background: rgba(255,255,255,.10);
-      color: var(--paper-2);
-      border: 1px solid rgba(255,255,255,.14);
-    }
-    .btn-secondary:hover {
-      background: rgba(255,255,255,.16);
-    }
+    /* language bar */
+    .lang-bar { display: flex; align-items: center; gap: 3px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10); border-radius: 8px; padding: 3px 4px; }
+    .lang-btn { width: 30px; height: 22px; border-radius: 5px; border: 1.5px solid transparent; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: all var(--tr); position: relative; overflow: visible; }
+    .lang-btn svg { width: 24px; height: 18px; border-radius: 2px; display: block; pointer-events: none; }
+    .lang-btn:hover { border-color: rgba(255,255,255,.30); background: rgba(255,255,255,.08); }
+    .lang-btn.active { border-color: var(--accent); background: rgba(192,57,43,.20); }
+    .lang-tip { position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); background: rgba(26,22,18,.92); color: var(--paper-2); font-family: var(--font-mono); font-size: 10px; white-space: nowrap; padding: 3px 7px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 200; }
+    .lang-btn:hover .lang-tip { opacity: 1; }
 
-    /* Icon SVG inside buttons */
+    /* topbar buttons */
+    .topbar-actions { display: flex; gap: 8px; }
+    .btn { font-family: var(--font-ui); font-size: 13px; font-weight: 600; cursor: pointer; border: none; border-radius: 6px; padding: 0 14px; height: 34px; display: inline-flex; align-items: center; gap: 6px; transition: background var(--tr), transform var(--tr), box-shadow var(--tr); }
+    .btn:active { transform: scale(.97); }
     .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .btn-ghost { background: transparent; color: var(--ink-3); border: 1px solid rgba(255,255,255,.12); }
+    .btn-ghost:hover { background: rgba(255,255,255,.08); color: var(--paper); }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(192,57,43,.35); }
+    .btn-primary:hover { background: #a93226; }
+    .btn-secondary { background: rgba(255,255,255,.10); color: var(--paper-2); border: 1px solid rgba(255,255,255,.14); }
+    .btn-secondary:hover { background: rgba(255,255,255,.16); }
 
-    /* ── App shell ── */
-    .app {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
+    /* app */
+    .app { flex: 1; display: flex; overflow: hidden; }
 
-    /* ── Sidebar ── */
-    .sidebar {
-      width: var(--panel-w);
-      flex-shrink: 0;
-      background: var(--paper);
-      border-right: 1px solid var(--paper-3);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-      scrollbar-width: thin;
-      scrollbar-color: var(--paper-3) transparent;
-    }
+    /* sidebar */
+    .sidebar { width: var(--panel-w); flex-shrink: 0; background: var(--paper); border-right: 1px solid var(--paper-3); display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--paper-3) transparent; }
     .sidebar::-webkit-scrollbar { width: 4px; }
-    .sidebar::-webkit-scrollbar-track { background: transparent; }
     .sidebar::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 2px; }
-
-    .sidebar-section {
-      padding: 20px 20px 0;
-    }
-    .sidebar-section:last-child { padding-bottom: 24px; }
-
-    .section-title {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--paper-3);
-    }
-
-    /* ── Form controls ── */
-    .field { margin-bottom: 14px; }
-    .field:last-child { margin-bottom: 0; }
-
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink-2);
-      margin-bottom: 5px;
-      letter-spacing: .01em;
-    }
-
-    textarea, input[type="number"] {
-      font-family: var(--font-ui);
-      font-size: 13px;
-      color: var(--ink);
-      background: var(--paper-2);
-      border: 1px solid var(--paper-3);
-      border-radius: var(--radius);
-      padding: 9px 12px;
-      width: 100%;
-      resize: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      outline: none;
-    }
-    textarea:focus, input[type="number"]:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(192,57,43,.12);
-    }
+    .sb { padding: 16px 16px 0; }
+    .sb:last-child { padding-bottom: 24px; }
+    .sec-title { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--paper-3); }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 5px; }
+    textarea, input[type="number"] { font-family: var(--font-ui); font-size: 13px; color: var(--ink); background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--radius); padding: 8px 11px; width: 100%; resize: none; outline: none; transition: border-color var(--tr), box-shadow var(--tr); }
+    textarea:focus, input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(192,57,43,.12); }
     textarea { line-height: 1.5; }
     input[type="number"] { -moz-appearance: textfield; }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-    /* Font picker cards */
-    .font-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-    .font-card {
-      background: var(--paper-2);
-      border: 1.5px solid var(--paper-3);
-      border-radius: 8px;
-      padding: 8px 10px;
-      cursor: pointer;
-      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
-      text-align: left;
-      position: relative;
-    }
-    .font-card:hover {
-      background: var(--accent-bg);
-      border-color: var(--accent-2);
-    }
-    .font-card.active {
-      border-color: var(--accent);
-      background: var(--accent-bg);
-      box-shadow: 0 0 0 3px rgba(192,57,43,.10);
-    }
-    .font-card .sample {
-      font-size: 22px;
-      line-height: 1.2;
-      color: var(--ink);
-      margin-bottom: 4px;
-      display: block;
-    }
-    .font-card .font-name {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--ink-3);
-      letter-spacing: .05em;
-    }
-    /* Badge "PT" nas fontes recomendadas */
-    .font-card .fc-badge {
-      position: absolute;
-      top: 6px; right: 6px;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: .04em;
-      background: var(--accent);
-      color: #fff;
-      border-radius: 4px;
-      padding: 1px 5px;
-      line-height: 1.6;
-    }
+    /* font grid */
+    .font-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .font-card { background: var(--paper-2); border: 1.5px solid var(--paper-3); border-radius: 8px; padding: 7px 9px; cursor: pointer; transition: all var(--tr); text-align: left; position: relative; }
+    .font-card:hover { background: var(--accent-bg); border-color: var(--accent-2); }
+    .font-card.active { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 3px rgba(192,57,43,.10); }
+    .fc-sample { font-size: 20px; line-height: 1.2; color: var(--ink); margin-bottom: 3px; display: block; }
+    .fc-name { font-family: var(--font-mono); font-size: 9px; color: var(--ink-3); letter-spacing: .04em; display: block; }
+    .fc-badge { position: absolute; top: 5px; right: 5px; font-family: var(--font-mono); font-size: 9px; background: var(--accent); color: #fff; border-radius: 3px; padding: 1px 4px; line-height: 1.6; }
 
-    /* ── Toggle de modo (Cursiva / Letra de Forma) ── */
-    .mode-toggle {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5px;
-      margin-bottom: 0;
-    }
-    .mode-btn {
-      font-family: var(--font-ui);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 9px 8px;
-      border-radius: 8px;
-      border: 1.5px solid var(--paper-3);
-      background: var(--paper-2);
-      color: var(--ink-3);
-      cursor: pointer;
-      text-align: center;
-      transition: all var(--transition);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      line-height: 1.2;
-    }
-    .mode-btn .mode-icon { font-size: 18px; line-height: 1; }
+    /* mode toggle */
+    .mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .mode-btn { font-family: var(--font-ui); font-size: 11px; font-weight: 600; padding: 8px 5px; border-radius: 8px; border: 1.5px solid var(--paper-3); background: var(--paper-2); color: var(--ink-3); cursor: pointer; text-align: center; transition: all var(--tr); display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .mode-btn .mi { font-size: 16px; line-height: 1; }
     .mode-btn:hover { background: var(--accent-bg); border-color: var(--accent-2); color: var(--ink); }
-    .mode-btn.active {
-      background: var(--accent-bg);
-      border-color: var(--accent);
-      color: var(--ink);
-      box-shadow: 0 0 0 3px rgba(192,57,43,.10);
-    }
-    .mode-desc {
-      font-size: 11px;
-      color: var(--ink-3);
-      margin-top: 8px;
-      line-height: 1.5;
-      padding: 8px 10px;
-      background: var(--paper-2);
-      border-radius: 6px;
-      border: 1px solid var(--paper-3);
-    }
+    .mode-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--ink); box-shadow: 0 0 0 3px rgba(192,57,43,.08); }
+    .mode-desc { font-size: 11px; color: var(--ink-3); margin-top: 7px; line-height: 1.5; padding: 7px 9px; background: var(--paper-2); border-radius: 6px; border: 1px solid var(--paper-3); }
 
-    /* Slider row */
-    .slider-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .slider-row input[type="range"] {
-      flex: 1;
-      -webkit-appearance: none;
-      appearance: none;
-      height: 4px;
-      border-radius: 2px;
-      background: var(--paper-3);
-      outline: none;
-      cursor: pointer;
-    }
-    .slider-row input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(192,57,43,.4);
-      transition: transform var(--transition);
-    }
+    /* slider */
+    .slider-row { display: flex; align-items: center; gap: 10px; }
+    .slider-row input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px; background: var(--paper-3); outline: none; cursor: pointer; }
+    .slider-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 1px 4px rgba(192,57,43,.4); transition: transform var(--tr); }
     .slider-row input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-    .slider-row input[type="range"]::-moz-range-thumb {
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: none;
-      cursor: pointer;
-    }
-    .slider-value {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--ink-2);
-      min-width: 30px;
-      text-align: right;
-    }
+    .slider-row input[type="range"]::-moz-range-thumb { width:16px;height:16px;border-radius:50%;background:var(--accent);border:none; }
+    .sv { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); min-width: 30px; text-align: right; }
 
-    /* Training type pills */
-    .pill-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .pill {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: 8px;
-      border: 1.5px solid var(--paper-3);
-      background: var(--paper-2);
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-    .pill:hover {
-      background: var(--accent-bg);
-      border-color: var(--accent-2);
-    }
-    .pill.active {
-      background: var(--accent-bg);
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(192,57,43,.08);
-    }
-    .pill-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      background: var(--paper-3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      flex-shrink: 0;
-      transition: background var(--transition);
-    }
-    .pill.active .pill-icon {
-      background: rgba(192,57,43,.15);
-    }
+    /* pills */
+    .pill-group { display: flex; flex-direction: column; gap: 5px; }
+    .pill { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--paper-3); background: var(--paper-2); cursor: pointer; transition: all var(--tr); }
+    .pill:hover { background: var(--accent-bg); border-color: var(--accent-2); }
+    .pill.active { background: var(--accent-bg); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(192,57,43,.08); }
+    .pill-icon { width: 26px; height: 26px; border-radius: 6px; background: var(--paper-3); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; transition: background var(--tr); }
+    .pill.active .pill-icon { background: rgba(192,57,43,.15); }
     .pill-label { font-size: 12px; font-weight: 600; color: var(--ink-2); }
     .pill-desc  { font-size: 11px; color: var(--ink-3); }
 
-    /* number + arrows */
-    .num-field {
-      display: flex;
-      align-items: center;
-      background: var(--paper-2);
-      border: 1px solid var(--paper-3);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color var(--transition), box-shadow var(--transition);
-    }
-    .num-field:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(192,57,43,.12);
-    }
-    .num-field input {
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      text-align: center;
-      flex: 1;
-      box-shadow: none !important;
-    }
-    .num-btn {
-      width: 34px;
-      height: 36px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 17px;
-      color: var(--ink-3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background var(--transition), color var(--transition);
-      flex-shrink: 0;
-    }
+    /* num field */
+    .num-field { display: flex; align-items: center; background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: var(--radius); overflow: hidden; transition: border-color var(--tr), box-shadow var(--tr); }
+    .num-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(192,57,43,.12); }
+    .num-field input { border: none; border-radius: 0; background: transparent; text-align: center; flex: 1; box-shadow: none !important; }
+    .num-btn { width: 34px; height: 36px; background: transparent; border: none; cursor: pointer; font-size: 17px; color: var(--ink-3); display: flex; align-items: center; justify-content: center; transition: background var(--tr), color var(--tr); flex-shrink: 0; }
     .num-btn:hover { background: var(--paper-3); color: var(--ink); }
 
-    /* ── Preview area ── */
-    .preview-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: var(--paper-2);
-    }
-
-    .preview-toolbar {
-      height: 44px;
-      background: var(--paper);
-      border-bottom: 1px solid var(--paper-3);
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .preview-toolbar-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-      flex: 1;
-    }
-
-    .zoom-control {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--paper-2);
-      border: 1px solid var(--paper-3);
-      border-radius: 6px;
-      padding: 0 6px;
-      height: 30px;
-    }
-    .zoom-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-size: 15px;
-      color: var(--ink-3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      transition: background var(--transition), color var(--transition);
-      line-height: 1;
-    }
+    /* preview */
+    .preview-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .preview-toolbar { height: 44px; background: var(--paper); border-bottom: 1px solid var(--paper-3); display: flex; align-items: center; padding: 0 18px; gap: 10px; flex-shrink: 0; }
+    .pt-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); flex: 1; }
+    .zoom-control { display: flex; align-items: center; gap: 6px; background: var(--paper-2); border: 1px solid var(--paper-3); border-radius: 6px; padding: 0 6px; height: 30px; }
+    .zoom-btn { background: transparent; border: none; cursor: pointer; color: var(--ink-3); display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; font-size: 15px; transition: background var(--tr), color var(--tr); line-height: 1; }
     .zoom-btn:hover { background: var(--paper-3); color: var(--ink); }
-    .zoom-label {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--ink-2);
-      min-width: 34px;
-      text-align: center;
-    }
-
-    .preview-scroll {
-      flex: 1;
-      overflow: auto;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 32px 24px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--paper-3) transparent;
-    }
+    .zoom-label { font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); min-width: 34px; text-align: center; }
+    .preview-scroll { flex: 1; overflow: auto; display: flex; align-items: flex-start; justify-content: center; padding: 32px 24px; background: var(--paper-2); scrollbar-width: thin; scrollbar-color: var(--paper-3) transparent; }
     .preview-scroll::-webkit-scrollbar { width: 6px; }
-    .preview-scroll::-webkit-scrollbar-track { background: transparent; }
     .preview-scroll::-webkit-scrollbar-thumb { background: var(--paper-3); border-radius: 3px; }
-
-    /* ── A4 Sheet ── */
-    .sheet-wrap {
-      transform-origin: top center;
-    }
-
-    .sheet {
-      width: 794px;   /* A4 at 96dpi */
-      min-height: 1123px;
-      background: #fff;
-      box-shadow: var(--shadow-md), 0 20px 60px rgba(26,22,18,.12);
-      border-radius: 2px;
-      padding: 64px 72px;
-      position: relative;
-      font-family: var(--font-display);
-    }
-
-    .sheet-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 36px;
-      padding-bottom: 12px;
-      border-bottom: 1.5px solid var(--paper-3);
-    }
-    .sheet-title {
-      font-family: var(--font-display);
-      font-size: 11px;
-      color: var(--ink-3);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-    .sheet-date {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--ink-3);
-    }
-
-    /* Lines on the sheet */
+    .sheet-wrap { transform-origin: top center; }
+    .sheet { width: 794px; min-height: 1123px; background: #fff; box-shadow: var(--shadow-md), 0 20px 60px rgba(26,22,18,.12); border-radius: 2px; padding: 64px 72px; position: relative; }
+    .sheet-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 30px; padding-bottom: 10px; border-bottom: 1.5px solid var(--paper-3); }
+    .sheet-title { font-family: var(--font-display); font-size: 11px; color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; }
+    .sheet-date  { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
     .sheet-lines { display: flex; flex-direction: column; }
+    .line-block { margin-bottom: 20px; }
+    .text-line { display: block; line-height: 1; padding-bottom: 4px; }
+    .guide-text { color: #d8d0c4; }
+    .practice-line { width: 100%; background: var(--guide); display: block; margin-top: 6px; }
+    .blank-line { width: 100%; background: #c8dff7; display: block; }
+    .sheet-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 600px; gap: 14px; opacity: .55; }
+    .sheet-empty-icon { font-size: 40px; }
+    .sheet-empty-text { font-family: var(--font-display); font-style: italic; font-size: 17px; color: var(--ink-3); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #2ecc71; box-shadow: 0 0 5px #2ecc71; display: inline-block; }
 
-    .line-block {
-      margin-bottom: 24px;
-    }
-
-    .text-line {
-      position: relative;
-      display: block;
-      line-height: 1;
-      padding-bottom: 4px;
-    }
-
-    /* Guide text (tipo "guia") */
-    .guide-text {
-      color: #d8d0c4;
-      display: block;
-    }
-
-    /* Practice line drawn below */
-    .practice-line {
-      width: 100%;
-      height: 1px;
-      background: var(--guide);
-      display: block;
-      margin-top: 6px;
-    }
-
-    /* Bottom rule lines for "linha em branco" */
-    .blank-line {
-      width: 100%;
-      height: 1px;
-      background: #c8dff7;
-      display: block;
-      margin-bottom: 0;
-    }
-
-    /* Empty placeholder state */
-    .sheet-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 600px;
-      gap: 14px;
-      opacity: .55;
-    }
-    .sheet-empty-icon {
-      font-size: 40px;
-      line-height: 1;
-    }
-    .sheet-empty-text {
-      font-family: var(--font-display);
-      font-style: italic;
-      font-size: 17px;
-      color: var(--ink-3);
-    }
-
-    /* ── Print styles ── */
     @media print {
-      .topbar, .sidebar, .preview-toolbar, .zoom-control { display: none !important; }
+      .topbar, .sidebar, .preview-toolbar { display: none !important; }
       body, html { overflow: visible !important; height: auto !important; background: white; }
       .app { display: block; }
       .preview-area { display: block; overflow: visible; }
       .preview-scroll { overflow: visible; padding: 0; display: block; }
       .sheet-wrap { transform: none !important; }
-      .sheet {
-        width: 100%;
-        min-height: unset;
-        box-shadow: none;
-        border-radius: 0;
-        padding: 20mm 20mm 20mm 20mm;
-        page-break-after: always;
-      }
-    }
-
-    /* ── Divider ── */
-    .sidebar-divider {
-      height: 1px;
-      background: var(--paper-3);
-      margin: 4px 0 20px;
-    }
-
-    /* status badge */
-    .status-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #2ecc71;
-      box-shadow: 0 0 5px #2ecc71;
-      display: inline-block;
+      .sheet { width: 100%; min-height: unset; box-shadow: none; border-radius: 0; padding: 20mm; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── Top Bar ── -->
 <header class="topbar">
-  <div class="topbar-logo">
-    <span class="wordmark">Caligrafia</span>
-    <span class="tag">Gerador de folhas</span>
+  <div class="topbar-left">
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <span class="wordmark">Caligrafia</span>
+      <span class="tag" id="topbar-tag">Gerador de folhas</span>
+    </div>
+
+    <div class="lang-bar">
+      <!-- Portugal -->
+      <button class="lang-btn active" data-lang="pt-PT" onclick="selectLang('pt-PT')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#006600"/><rect x="8" width="16" height="18" fill="#FF0000"/><circle cx="8" cy="9" r="4" fill="#FFD700" stroke="#003399" stroke-width=".6"/><circle cx="8" cy="9" r="2.4" fill="#fff"/><circle cx="8" cy="9" r="1.2" fill="#003399"/></svg>
+        <span class="lang-tip">Português (PT)</span>
+      </button>
+      <!-- Brasil -->
+      <button class="lang-btn" data-lang="pt-BR" onclick="selectLang('pt-BR')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#009C3B"/><polygon points="12,1.5 22.5,9 12,16.5 1.5,9" fill="#FEDF00"/><circle cx="12" cy="9" r="3.6" fill="#002776"/><path d="M8.6,7.8 Q12,6.2 15.4,7.8" stroke="#fff" stroke-width=".8" fill="none"/></svg>
+        <span class="lang-tip">Português (BR)</span>
+      </button>
+      <!-- Espanha -->
+      <button class="lang-btn" data-lang="es" onclick="selectLang('es')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#AA151B"/><rect y="4.5" width="24" height="9" fill="#F1BF00"/></svg>
+        <span class="lang-tip">Español</span>
+      </button>
+      <!-- Reino Unido -->
+      <button class="lang-btn" data-lang="en" onclick="selectLang('en')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#012169"/><path d="M0,0 L24,18 M24,0 L0,18" stroke="#fff" stroke-width="3.5"/><path d="M0,0 L24,18 M24,0 L0,18" stroke="#C8102E" stroke-width="2"/><path d="M12,0 V18 M0,9 H24" stroke="#fff" stroke-width="6"/><path d="M12,0 V18 M0,9 H24" stroke="#C8102E" stroke-width="3.5"/></svg>
+        <span class="lang-tip">English (UK)</span>
+      </button>
+      <!-- França -->
+      <button class="lang-btn" data-lang="fr" onclick="selectLang('fr')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#ED2939"/><rect width="16" height="18" fill="#fff"/><rect width="8" height="18" fill="#002395"/></svg>
+        <span class="lang-tip">Français</span>
+      </button>
+      <!-- Alemanha -->
+      <button class="lang-btn" data-lang="de" onclick="selectLang('de')">
+        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#FFCE00"/><rect width="24" height="12" fill="#DD0000"/><rect width="24" height="6" fill="#000"/></svg>
+        <span class="lang-tip">Deutsch</span>
+      </button>
+    </div>
   </div>
+
   <div class="topbar-actions">
     <button class="btn btn-secondary" onclick="gerarCaligrafia()">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 1v10M3 7l5 5 5-5"/><path d="M1 14h14"/></svg>
-      Gerar folha
+      <span id="btn-gerar-top">Gerar folha</span>
     </button>
     <button class="btn btn-ghost" onclick="window.print()">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="1" width="10" height="7" rx="1"/><path d="M3 8H1v6h14V8h-2"/><rect x="4" y="11" width="8" height="4"/><circle cx="12" cy="5" r=".5" fill="currentColor"/></svg>
-      Imprimir
+      <span id="btn-print-top">Imprimir</span>
     </button>
   </div>
 </header>
 
-<!-- ── App Shell ── -->
 <div class="app">
-
-  <!-- ── Sidebar ── -->
   <aside class="sidebar">
 
-    <!-- Texto -->
-    <div class="sidebar-section">
-      <p class="section-title">Texto</p>
-      <div class="field">
-        <label for="input-texto">Conteúdo para praticar</label>
-        <textarea id="input-texto" rows="4" placeholder="Ex: A raposa saltou sobre o cão preguiçoso..."></textarea>
-      </div>
+    <div class="sb">
+      <p class="sec-title" id="lbl-texto">Texto</p>
+      <label for="input-texto" id="lbl-texto-sub">Conteúdo para praticar</label>
+      <textarea id="input-texto" rows="4" placeholder="Ex: A raposa saltou sobre o cão preguiçoso..."></textarea>
     </div>
 
-    <!-- Modo de escrita -->
-    <div class="sidebar-section">
-      <p class="section-title">Modo de escrita</p>
+    <div class="sb">
+      <p class="sec-title" id="lbl-modo">Modo de escrita</p>
       <div class="mode-toggle">
         <button class="mode-btn active" id="modo-cursiva" onclick="selectModo('cursiva')">
-          <span class="mode-icon">✒</span>
-          Cursiva
+          <span class="mi">✒</span><span id="lbl-m-cursiva">Cursiva</span>
         </button>
         <button class="mode-btn" id="modo-forma" onclick="selectModo('forma')">
-          <span class="mode-icon">Aa</span>
-          Letra de Forma
+          <span class="mi">Aa</span><span id="lbl-m-forma">Letra de Forma</span>
         </button>
       </div>
-      <p class="mode-desc" id="modo-desc">Escrita vertical ligada — modelo português (Porto Editora). Para crianças a partir do 1.º ano e adultos.</p>
+      <p class="mode-desc" id="modo-desc"></p>
     </div>
 
-    <!-- Fonte -->
-    <div class="sidebar-section">
-      <p class="section-title">Fonte</p>
-      <div class="font-grid" id="font-grid">
-        <!-- populated by JS -->
+    <div class="sb">
+      <p class="sec-title" id="lbl-fonte">Fonte</p>
+      <div class="font-grid" id="font-grid"></div>
+    </div>
+
+    <div class="sb">
+      <p class="sec-title" id="lbl-tamanho">Tamanho</p>
+      <label id="lbl-tamanho-sub">Tamanho da fonte</label>
+      <div class="slider-row">
+        <input type="range" id="tamanho-fonte" min="16" max="52" value="28" oninput="syncFontSize(this.value)">
+        <span class="sv" id="label-tamanho">28px</span>
       </div>
     </div>
 
-    <!-- Tamanho -->
-    <div class="sidebar-section">
-      <p class="section-title">Tamanho</p>
-      <div class="field">
-        <label>Tamanho da fonte</label>
-        <div class="slider-row">
-          <input type="range" id="tamanho-fonte" min="16" max="52" value="28" oninput="syncFontSize(this.value)">
-          <span class="slider-value" id="label-tamanho">28px</span>
-        </div>
+    <div class="sb">
+      <p class="sec-title" id="lbl-linhas">Quantidade de linhas</p>
+      <div class="num-field">
+        <button class="num-btn" onclick="changeLines(-1)">−</button>
+        <input type="number" id="qtd-linhas" min="1" max="30" value="4">
+        <button class="num-btn" onclick="changeLines(+1)">+</button>
       </div>
     </div>
 
-    <!-- Linhas -->
-    <div class="sidebar-section">
-      <p class="section-title">Quantidade de linhas</p>
-      <div class="field">
-        <div class="num-field">
-          <button class="num-btn" onclick="changeLines(-1)">−</button>
-          <input type="number" id="qtd-linhas" min="1" max="30" value="4">
-          <button class="num-btn" onclick="changeLines(+1)">+</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tipo de treino -->
-    <div class="sidebar-section">
-      <p class="section-title">Tipo de treino</p>
-      <div class="pill-group" id="tipo-group">
+    <div class="sb">
+      <p class="sec-title" id="lbl-treino">Tipo de treino</p>
+      <div class="pill-group">
         <div class="pill active" data-value="guia" onclick="selectTipo(this)">
           <div class="pill-icon">✦</div>
-          <div>
-            <div class="pill-label">Texto guia</div>
-            <div class="pill-desc">Letra cinza para decalcar</div>
-          </div>
+          <div><div class="pill-label" id="lbl-tg">Texto guia</div><div class="pill-desc" id="lbl-tg-d">Letra cinza para decalcar</div></div>
         </div>
         <div class="pill" data-value="linha" onclick="selectTipo(this)">
           <div class="pill-icon">━</div>
-          <div>
-            <div class="pill-label">Linha em branco</div>
-            <div class="pill-desc">Pauta azul para escrever</div>
-          </div>
+          <div><div class="pill-label" id="lbl-tl">Linha em branco</div><div class="pill-desc" id="lbl-tl-d">Pauta azul para escrever</div></div>
         </div>
         <div class="pill" data-value="nenhum" onclick="selectTipo(this)">
           <div class="pill-icon">○</div>
-          <div>
-            <div class="pill-label">Papel limpo</div>
-            <div class="pill-desc">Sem guias, livre</div>
-          </div>
+          <div><div class="pill-label" id="lbl-tn">Papel limpo</div><div class="pill-desc" id="lbl-tn-d">Sem guias, livre</div></div>
         </div>
       </div>
     </div>
 
-    <div class="sidebar-section" style="padding-top: 8px;">
-      <button class="btn btn-primary" style="width:100%; justify-content:center; height:40px; font-size:14px;" onclick="gerarCaligrafia()">
+    <div class="sb" style="padding-top:8px;">
+      <button class="btn btn-primary" style="width:100%;justify-content:center;height:40px;font-size:14px;" onclick="gerarCaligrafia()">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M6 8h4M8 6v4"/></svg>
-        Gerar folha
+        <span id="btn-gerar-sb">Gerar folha</span>
       </button>
     </div>
 
   </aside>
 
-  <!-- ── Preview ── -->
   <main class="preview-area">
-
     <div class="preview-toolbar">
-      <span class="preview-toolbar-label">
-        <span class="status-dot"></span>
-        &nbsp; Preview — A4
-      </span>
+      <span class="pt-label"><span class="status-dot"></span>&nbsp; Preview — A4</span>
       <div class="zoom-control">
         <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
         <span class="zoom-label" id="zoom-label">75%</span>
         <button class="zoom-btn" onclick="changeZoom(+10)">+</button>
       </div>
     </div>
-
-    <div class="preview-scroll" id="preview-scroll">
-      <div class="sheet-wrap" id="sheet-wrap" style="transform: scale(0.75);">
+    <div class="preview-scroll">
+      <div class="sheet-wrap" id="sheet-wrap" style="transform:scale(0.75);">
         <div class="sheet" id="folha">
           <div class="sheet-empty">
             <div class="sheet-empty-icon">✒</div>
-            <div class="sheet-empty-text">Configure e clique em "Gerar folha"</div>
+            <div class="sheet-empty-text" id="empty-hint">Configure e clique em "Gerar folha"</div>
           </div>
         </div>
       </div>
     </div>
-
   </main>
 </div>
 
 <script>
-  /* ── Catálogo de fontes por modo ── */
-  const FONTES_CURSIVA = [
-    {
-      nome: 'Playwrite PT',
-      url:  'Playwrite+PT:wght@100..400',
-      sample: 'Aa',
-      familia: "'Playwrite PT', cursive",
-      peso: '200',
-      badge: 'PT',
-      desc: 'Modelo oficial português — escrita vertical ligada (Porto Editora)'
-    },
-    {
-      nome: 'Playwrite PT Guides',
-      url:  'Playwrite+PT+Guides',
-      sample: 'Aa',
-      familia: "'Playwrite PT Guides', cursive",
-      peso: '400',
-      badge: 'PT',
-      desc: 'Igual ao Playwrite PT mas com pautas integradas nos glifos — ideal para decalcar'
-    },
-    {
-      nome: 'Dancing Script',
-      url:  'Dancing+Script:wght@400',
-      sample: 'Aa',
-      familia: "'Dancing Script', cursive",
-      peso: '400',
-      badge: null,
-      desc: 'Cursiva inclinada de origem americana'
-    },
-    {
-      nome: 'Great Vibes',
-      url:  'Great+Vibes',
-      sample: 'Aa',
-      familia: "'Great Vibes', cursive",
-      peso: '400',
-      badge: null,
-      desc: 'Cursiva ornamentada, estilo caligrafia formal'
-    },
-    {
-      nome: 'Pinyon Script',
-      url:  'Pinyon+Script',
-      sample: 'Aa',
-      familia: "'Pinyon Script', cursive",
-      peso: '400',
-      badge: null,
-      desc: 'Cursiva elegante de estilo copperplate'
-    },
-    {
-      nome: 'Satisfy',
-      url:  'Satisfy',
-      sample: 'Aa',
-      familia: "'Satisfy', cursive",
-      peso: '400',
-      badge: null,
-      desc: 'Cursiva descontraída e legível'
-    },
-  ];
+/* ── i18n strings ── */
+const T = {
+  'pt-PT':{ htmlLang:'pt-PT', tag:'Gerador de folhas', btnGerar:'Gerar folha', btnPrint:'Imprimir',
+    sTexto:'Texto', sTextoSub:'Conteúdo para praticar', ph:'Ex: A raposa saltou sobre o cão preguiçoso...',
+    sModo:'Modo de escrita', mCursiva:'Cursiva', mForma:'Letra de Forma',
+    sFonte:'Fonte', sTam:'Tamanho', sTamSub:'Tamanho da fonte', sLinhas:'Quantidade de linhas',
+    sTreino:'Tipo de treino', tg:'Texto guia', tgD:'Letra cinza para decalcar',
+    tl:'Linha em branco', tlD:'Pauta azul para escrever', tn:'Papel limpo', tnD:'Sem guias, livre',
+    empty:'Configure e clique em "Gerar folha"', shTitle:'Folha de caligrafia',
+    descCursiva:'Escrita vertical ligada — modelo português (Porto Editora). Para crianças a partir do 1.º ano e adultos.',
+    descForma:'Letras impressas com "a" e "g" manuscritos (Andika). Ideal para pré-escolar e iniciantes.',
+    defCursiva:'A raposa saltou sobre o cão preguiçoso.', defForma:'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z',
+    locale:'pt-PT' },
+  'pt-BR':{ htmlLang:'pt-BR', tag:'Gerador de folhas', btnGerar:'Gerar folha', btnPrint:'Imprimir',
+    sTexto:'Texto', sTextoSub:'Conteúdo para praticar', ph:'Ex: A raposa marrom saltou sobre o cão preguiçoso...',
+    sModo:'Modo de escrita', mCursiva:'Cursiva', mForma:'Letra Bastão',
+    sFonte:'Fonte', sTam:'Tamanho', sTamSub:'Tamanho da fonte', sLinhas:'Quantidade de linhas',
+    sTreino:'Tipo de treino', tg:'Texto guia', tgD:'Letra cinza para decalcar',
+    tl:'Linha em branco', tlD:'Pauta azul para escrever', tn:'Folha limpa', tnD:'Sem guias, livre',
+    empty:'Configure e clique em "Gerar folha"', shTitle:'Folha de caligrafia',
+    descCursiva:'Escrita cursiva vertical — modelo brasileiro (Kindergarten / Bê-a-Bá, Tony de Marco, 1996). A partir do 2.º ano.',
+    descForma:'Letra bastão com "a" e "g" simples (Andika). Indicado para o pré-escolar e 1.º ano.',
+    defCursiva:'A raposa marrom saltou sobre o cão preguiçoso.', defForma:'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z',
+    locale:'pt-BR' },
+  'es':{ htmlLang:'es', tag:'Generador de hojas', btnGerar:'Generar hoja', btnPrint:'Imprimir',
+    sTexto:'Texto', sTextoSub:'Contenido para practicar', ph:'Ej: El veloz murciélago hindú comía feliz cardillo...',
+    sModo:'Modo de escritura', mCursiva:'Cursiva', mForma:'Letra de imprenta',
+    sFonte:'Fuente', sTam:'Tamaño', sTamSub:'Tamaño de fuente', sLinhas:'Cantidad de líneas',
+    sTreino:'Tipo de práctica', tg:'Texto guía', tgD:'Letra gris para calcar',
+    tl:'Línea en blanco', tlD:'Pauta azul para escribir', tn:'Hoja limpia', tnD:'Sin guías, libre',
+    empty:'Configure y pulse "Generar hoja"', shTitle:'Hoja de caligrafía',
+    descCursiva:'Escritura cursiva vertical híbrida — modelo español (Cuadernos Rubio / Santillana). Mayúsculas imprenta + minúsculas cursivas.',
+    descForma:'Letras de imprenta con "a" y "g" simples (Andika). Ideal para preescolar.',
+    defCursiva:'El veloz murciélago hindú comía feliz cardillo y kiwi.', defForma:'A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z',
+    locale:'es-ES' },
+  'en':{ htmlLang:'en-GB', tag:'Worksheet Generator', btnGerar:'Generate sheet', btnPrint:'Print',
+    sTexto:'Text', sTextoSub:'Content to practise', ph:'E.g.: The quick brown fox jumps over the lazy dog...',
+    sModo:'Writing mode', mCursiva:'Cursive', mForma:'Print script',
+    sFonte:'Font', sTam:'Size', sTamSub:'Font size', sLinhas:'Number of lines',
+    sTreino:'Practice type', tg:'Guide text', tgD:'Grey text to trace over',
+    tl:'Blank line', tlD:'Blue rule for writing', tn:'Clean sheet', tnD:'No guides, free',
+    empty:'Set options and click "Generate sheet"', shTitle:'Handwriting worksheet',
+    descCursiva:'Semi-joined cursive — British model (Nelson Handwriting, Oxford UP). Oval letter bases, optional slant.',
+    descForma:'Print script with single-storey a & g (Andika). Ideal for Early Years and KS1.',
+    defCursiva:'The quick brown fox jumps over the lazy dog.', defForma:'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z',
+    locale:'en-GB' },
+  'fr':{ htmlLang:'fr', tag:'Générateur de feuilles', btnGerar:'Générer la feuille', btnPrint:'Imprimer',
+    sTexto:'Texte', sTextoSub:'Contenu à pratiquer', ph:'Ex : Portez ce vieux whisky au juge blond qui fume...',
+    sModo:"Mode d'écriture", mCursiva:'Cursive', mForma:'Script',
+    sFonte:'Police', sTam:'Taille', sTamSub:'Taille de la police', sLinhas:'Nombre de lignes',
+    sTreino:"Type d'exercice", tg:'Texte guide', tgD:'Lettre grise à calquer',
+    tl:'Ligne vide', tlD:'Réglure bleue Séyès', tn:'Feuille blanche', tnD:'Sans guides',
+    empty:'Configurez et cliquez "Générer la feuille"', shTitle:"Feuille d'écriture",
+    descCursiva:"Écriture cursive verticale continue — modèle français (Méthode Dumont / Écriture A, Ministère de l'Éducation). Majuscules ornées.",
+    descForma:'Lettres script avec « a » et « g » simples (Andika). Idéal pour la maternelle et le CP.',
+    defCursiva:'Portez ce vieux whisky au juge blond qui fume.', defForma:'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z',
+    locale:'fr-FR' },
+  'de':{ htmlLang:'de', tag:'Arbeitsblatt-Generator', btnGerar:'Blatt erstellen', btnPrint:'Drucken',
+    sTexto:'Text', sTextoSub:'Inhalt zum Üben', ph:'Bsp.: Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich...',
+    sModo:'Schreibmodus', mCursiva:'Schreibschrift', mForma:'Druckschrift',
+    sFonte:'Schriftart', sTam:'Größe', sTamSub:'Schriftgröße', sLinhas:'Anzahl der Zeilen',
+    sTreino:'Übungstyp', tg:'Vorlage', tgD:'Grauer Text zum Nachspuren',
+    tl:'Leere Linie', tlD:'Blaue Schreibleinie', tn:'Leeres Blatt', tnD:'Ohne Hilfslinien',
+    empty:'Konfigurieren und „Blatt erstellen" klicken', shTitle:'Schreibübungsblatt',
+    descCursiva:'Verbundene Ausgangsschrift — deutsches Modell (VA / SAS / LA je nach Bundesland). Aufrecht, gleichmäßige Bögen.',
+    descForma:'Druckschrift (Grundschrift) mit einfachem „a" und „g" (Andika). Für Vorschule und 1. Klasse.',
+    defCursiva:'Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich.', defForma:'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Ä Ö Ü',
+    locale:'de-DE' },
+};
 
-  const FONTES_FORMA = [
-    {
-      nome: 'Andika',
-      url:  'Andika',
-      sample: 'Aa',
-      familia: "'Andika', sans-serif",
-      peso: '400',
-      badge: '↗',
-      desc: 'Desenhada para alfabetização — "a" e "g" com forma manuscrita simples (SIL International)'
-    },
-    {
-      nome: 'Atkinson Hyperlegible',
-      url:  'Atkinson+Hyperlegible',
-      sample: 'Aa',
-      familia: "'Atkinson Hyperlegible', sans-serif",
-      peso: '400',
-      badge: null,
-      desc: 'Alta legibilidade, letras com formas distintas — boa para crianças com dislexia'
-    },
-    {
-      nome: 'Nunito',
-      url:  'Nunito:wght@400',
-      sample: 'Aa',
-      familia: "'Nunito', sans-serif",
-      peso: '400',
-      badge: null,
-      desc: 'Arredondada e amigável, boa leiturabilidade para iniciantes'
-    },
-    {
-      nome: 'Quicksand',
-      url:  'Quicksand:wght@400',
-      sample: 'Aa',
-      familia: "'Quicksand', sans-serif",
-      peso: '400',
-      badge: null,
-      desc: 'Geométrica e limpa, traços simples'
-    },
-  ];
+/* ── font catalogue per language & mode ── */
+const C = {
+  'pt-PT':{ cursiva:[
+    {n:'Playwrite PT',       u:'Playwrite+PT:wght@100..400', s:'Aa', f:"'Playwrite PT',cursive",        w:'200', b:'PT', d:'Modelo oficial PT (Porto Editora)'},
+    {n:'Playwrite PT Guides',u:'Playwrite+PT+Guides',        s:'Aa', f:"'Playwrite PT Guides',cursive",  w:'400', b:'PT', d:'Com pautas integradas para decalcar'},
+    {n:'Dancing Script',     u:'Dancing+Script:wght@400',    s:'Aa', f:"'Dancing Script',cursive",       w:'400', b:null, d:'Cursiva inclinada americana'},
+    {n:'Great Vibes',        u:'Great+Vibes',                s:'Aa', f:"'Great Vibes',cursive",          w:'400', b:null, d:'Cursiva ornamentada formal'},
+    {n:'Pinyon Script',      u:'Pinyon+Script',              s:'Aa', f:"'Pinyon Script',cursive",        w:'400', b:null, d:'Estilo copperplate elegante'},
+    {n:'Satisfy',            u:'Satisfy',                    s:'Aa', f:"'Satisfy',cursive",              w:'400', b:null, d:'Cursiva descontraída e legível'},
+  ], forma:[
+    {n:'Andika',               u:'Andika',                       s:'Aa', f:"'Andika',sans-serif",              w:'400', b:'↗', d:'"a" e "g" manuscritos (SIL)'},
+    {n:'Atkinson Hyperlegible',u:'Atkinson+Hyperlegible',        s:'Aa', f:"'Atkinson Hyperlegible',sans-serif",w:'400', b:null,d:'Alta legibilidade, boa para dislexia'},
+    {n:'Nunito',               u:'Nunito:wght@400',              s:'Aa', f:"'Nunito',sans-serif",               w:'400', b:null,d:'Arredondada e amigável'},
+    {n:'Quicksand',            u:'Quicksand:wght@400',           s:'Aa', f:"'Quicksand',sans-serif",            w:'400', b:null,d:'Geométrica e limpa'},
+  ]},
+  'pt-BR':{ cursiva:[
+    {n:'Playwrite BR',       u:'Playwrite+BR:wght@100..400', s:'Aa', f:"'Playwrite BR',cursive",        w:'200', b:'BR', d:'Modelo oficial BR (Kindergarten / Bê-a-Bá)'},
+    {n:'Playwrite BR Guides',u:'Playwrite+BR+Guides',        s:'Aa', f:"'Playwrite BR Guides',cursive",  w:'400', b:'BR', d:'Com pautas integradas'},
+    {n:'Dancing Script',     u:'Dancing+Script:wght@400',    s:'Aa', f:"'Dancing Script',cursive",       w:'400', b:null, d:'Cursiva inclinada fluida'},
+    {n:'Pacifico',           u:'Pacifico',                   s:'Aa', f:"'Pacifico',cursive",             w:'400', b:null, d:'Estilo casual e arredondado'},
+    {n:'Satisfy',            u:'Satisfy',                    s:'Aa', f:"'Satisfy',cursive",              w:'400', b:null, d:'Cursiva fluida e legível'},
+    {n:'Sacramento',         u:'Sacramento',                 s:'Aa', f:"'Sacramento',cursive",           w:'400', b:null, d:'Fino e elegante'},
+  ], forma:[
+    {n:'Andika',               u:'Andika',                       s:'Aa', f:"'Andika',sans-serif",              w:'400', b:'↗', d:'"a" e "g" simples (SIL)'},
+    {n:'Atkinson Hyperlegible',u:'Atkinson+Hyperlegible',        s:'Aa', f:"'Atkinson Hyperlegible',sans-serif",w:'400', b:null,d:'Alta legibilidade'},
+    {n:'Nunito',               u:'Nunito:wght@400',              s:'Aa', f:"'Nunito',sans-serif",               w:'400', b:null,d:'Arredondada, muito usada no BR'},
+    {n:'Quicksand',            u:'Quicksand:wght@400',           s:'Aa', f:"'Quicksand',sans-serif",            w:'400', b:null,d:'Geométrica e limpa'},
+  ]},
+  'es':{ cursiva:[
+    {n:'Playwrite ES',       u:'Playwrite+ES:wght@100..400',     s:'Aa', f:"'Playwrite ES',cursive",        w:'200', b:'ES', d:'Modelo oficial España (Rubio / Santillana)'},
+    {n:'Playwrite ES Guides',u:'Playwrite+ES+Guides',            s:'Aa', f:"'Playwrite ES Guides',cursive",  w:'400', b:'ES', d:'Con guías integradas en los glifos'},
+    {n:'Playwrite ES Deco',  u:'Playwrite+ES+Deco:wght@100..400',s:'Aa', f:"'Playwrite ES Deco',cursive",   w:'200', b:'ES', d:'Variante decorativa con mayúsculas ornamentadas'},
+    {n:'Dancing Script',     u:'Dancing+Script:wght@400',        s:'Aa', f:"'Dancing Script',cursive",       w:'400', b:null, d:'Cursiva inclinada fluida'},
+    {n:'Great Vibes',        u:'Great+Vibes',                    s:'Aa', f:"'Great Vibes',cursive",          w:'400', b:null, d:'Cursiva ornada formal'},
+    {n:'Satisfy',            u:'Satisfy',                        s:'Aa', f:"'Satisfy',cursive",              w:'400', b:null, d:'Cursiva desenfadada y legible'},
+  ], forma:[
+    {n:'Andika',               u:'Andika',                       s:'Aa', f:"'Andika',sans-serif",              w:'400', b:'↗', d:'"a" y "g" de trazo simple (SIL)'},
+    {n:'Atkinson Hyperlegible',u:'Atkinson+Hyperlegible',        s:'Aa', f:"'Atkinson Hyperlegible',sans-serif",w:'400', b:null,d:'Alta legibilidad'},
+    {n:'Nunito',               u:'Nunito:wght@400',              s:'Aa', f:"'Nunito',sans-serif",               w:'400', b:null,d:'Redondeada y amigable'},
+    {n:'Quicksand',            u:'Quicksand:wght@400',           s:'Aa', f:"'Quicksand',sans-serif",            w:'400', b:null,d:'Geométrica y limpia'},
+  ]},
+  'en':{ cursiva:[
+    {n:'Playwrite GB S',       u:'Playwrite+GB+S:wght@100..400', s:'Aa', f:"'Playwrite GB S',cursive",       w:'200', b:'UK', d:'England semi-joined (Nelson Handwriting, Oxford UP)'},
+    {n:'Playwrite GB S Guides',u:'Playwrite+GB+S+Guides',        s:'Aa', f:"'Playwrite GB S Guides',cursive", w:'400', b:'UK', d:'With integrated guidelines for tracing'},
+    {n:'Playwrite GB J',       u:'Playwrite+GB+J:wght@100..400', s:'Aa', f:"'Playwrite GB J',cursive",        w:'200', b:'UK', d:'England fully-joined style'},
+    {n:'Dancing Script',       u:'Dancing+Script:wght@400',      s:'Aa', f:"'Dancing Script',cursive",        w:'400', b:null, d:'Slanted casual cursive'},
+    {n:'Pinyon Script',        u:'Pinyon+Script',                 s:'Aa', f:"'Pinyon Script',cursive",         w:'400', b:null, d:'Copperplate formal style'},
+    {n:'Satisfy',              u:'Satisfy',                       s:'Aa', f:"'Satisfy',cursive",               w:'400', b:null, d:'Relaxed, legible cursive'},
+  ], forma:[
+    {n:'Andika',               u:'Andika',                       s:'Aa', f:"'Andika',sans-serif",              w:'400', b:'↗', d:'Single-storey a & g (SIL International)'},
+    {n:'Atkinson Hyperlegible',u:'Atkinson+Hyperlegible',        s:'Aa', f:"'Atkinson Hyperlegible',sans-serif",w:'400', b:null,d:'High legibility, good for dyslexia'},
+    {n:'Nunito',               u:'Nunito:wght@400',              s:'Aa', f:"'Nunito',sans-serif",               w:'400', b:null,d:'Rounded, child-friendly'},
+    {n:'Quicksand',            u:'Quicksand:wght@400',           s:'Aa', f:"'Quicksand',sans-serif",            w:'400', b:null,d:'Clean geometric forms'},
+  ]},
+  'fr':{ cursiva:[
+    {n:'Playwrite FR Trad',       u:'Playwrite+FR+Trad:wght@100..400',    s:'Aa', f:"'Playwrite FR Trad',cursive",        w:'200', b:'FR', d:'Écriture cursive traditionnelle (Méthode Dumont / Écriture A)'},
+    {n:'Playwrite FR Trad Guides',u:'Playwrite+FR+Trad+Guides',           s:'Aa', f:"'Playwrite FR Trad Guides',cursive",  w:'400', b:'FR', d:'Avec lignes directrices intégrées'},
+    {n:'Playwrite FR Moderne',    u:'Playwrite+FR+Moderne:wght@100..400', s:'Aa', f:"'Playwrite FR Moderne',cursive",       w:'200', b:'FR', d:'Écriture B — style moderne sans boucles'},
+    {n:'Dancing Script',          u:'Dancing+Script:wght@400',            s:'Aa', f:"'Dancing Script',cursive",             w:'400', b:null, d:'Cursive penchée fluide'},
+    {n:'Great Vibes',             u:'Great+Vibes',                        s:'Aa', f:"'Great Vibes',cursive",                w:'400', b:null, d:'Cursive ornée formelle'},
+    {n:'Satisfy',                 u:'Satisfy',                            s:'Aa', f:"'Satisfy',cursive",                    w:'400', b:null, d:'Cursive décontractée'},
+  ], forma:[
+    {n:'Andika',               u:'Andika',                       s:'Aa', f:"'Andika',sans-serif",              w:'400', b:'↗', d:'« a » et « g » manuscrits (SIL)'},
+    {n:'Atkinson Hyperlegible',u:'Atkinson+Hyperlegible',        s:'Aa', f:"'Atkinson Hyperlegible',sans-serif",w:'400', b:null,d:'Haute lisibilité'},
+    {n:'Nunito',               u:'Nunito:wght@400',              s:'Aa', f:"'Nunito',sans-serif",               w:'400', b:null,d:'Arrondie et accessible'},
+    {n:'Quicksand',            u:'Quicksand:wght@400',           s:'Aa', f:"'Quicksand',sans-serif",            w:'400', b:null,d:'Géométrique et épurée'},
+  ]},
+  'de':{ cursiva:[
+    {n:'Playwrite DE VA',       u:'Playwrite+DE+VA:wght@100..400',    s:'Aa', f:"'Playwrite DE VA',cursive",        w:'200', b:'DE', d:'Vereinfachte Ausgangsschrift — meistverbreitet'},
+    {n:'Playwrite DE VA Guides',u:'Playwrite+DE+VA+Guides',           s:'Aa', f:"'Playwrite DE VA Guides',cursive",  w:'400', b:'DE', d:'Mit eingebetteten Hilfslinien'},
+    {n:'Playwrite DE SAS',      u:'Playwrite+DE+SAS:wght@100..400',   s:'Aa', f:"'Playwrite DE SAS',cursive",        w:'200', b:'DE', d:'Schulausgangsschrift — ostdeutscher Raum'},
+    {n:'Playwrite DE LA',       u:'Playwrite+DE+LA:wght@100..400',    s:'Aa', f:"'Playwrite DE LA',cursive",         w:'200', b:'DE', d:'Lateinische Ausgangsschrift — südliche Bundesländer'},
+    {n:'Playwrite DE Grund',    u:'Playwrite+DE+Grund:wght@100..400', s:'Aa', f:"'Playwrite DE Grund',cursive",      w:'200', b:'DE', d:'Grundschrift — moderner Ansatz (HB, HH)'},
+    {n:'Dancing Script',        u:'Dancing+Script:wght@400',          s:'Aa', f:"'Dancing Script',cursive",          w:'400', b:null, d:'Schrägschrift, flüssig'},
+  ], forma:[
+    {n:'Andika',               u:'Andika',                       s:'Aa', f:"'Andika',sans-serif",              w:'400', b:'↗', d:'Einfaches „a" und „g" (SIL)'},
+    {n:'Atkinson Hyperlegible',u:'Atkinson+Hyperlegible',        s:'Aa', f:"'Atkinson Hyperlegible',sans-serif",w:'400', b:null,d:'Hohe Lesbarkeit, gut für Legasthenie'},
+    {n:'Nunito',               u:'Nunito:wght@400',              s:'Aa', f:"'Nunito',sans-serif",               w:'400', b:null,d:'Abgerundet und freundlich'},
+    {n:'Quicksand',            u:'Quicksand:wght@400',           s:'Aa', f:"'Quicksand',sans-serif",            w:'400', b:null,d:'Geometrisch und klar'},
+  ]},
+};
 
-  /* ── Estado global ── */
-  let modoAtual        = 'cursiva';
-  let fonteSelecionada = FONTES_CURSIVA[0];
-  let zoom             = 75;
+/* ── state ── */
+let lang  = 'pt-PT', modo = 'cursiva', fonte = C['pt-PT'].cursiva[0], tipo = 'guia', zoom = 75;
+const loaded = new Set();
 
-  /* ── Carregar fontes extras (para além das do <link> estático) ── */
-  function carregarFontes(lista) {
-    const families = lista.map(f => f.url).join('&family=');
-    const l = document.createElement('link');
-    l.rel  = 'stylesheet';
-    l.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
-    document.head.appendChild(l);
+function loadFonts(list){
+  const news = list.filter(f=>!loaded.has(f.u));
+  if(!news.length) return;
+  news.forEach(f=>loaded.add(f.u));
+  const l = document.createElement('link');
+  l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=' + news.map(f=>f.u).join('&family=') + '&display=swap';
+  document.head.appendChild(l);
+}
+
+function preload(){ Object.values(C).forEach(cat=>{ loadFonts(cat.cursiva); loadFonts(cat.forma); }); }
+
+/* ── lang switch ── */
+function selectLang(l){
+  lang = l;
+  const t = T[l];
+  document.documentElement.lang = t.htmlLang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  document.getElementById('topbar-tag').textContent   = t.tag;
+  document.getElementById('btn-gerar-top').textContent = t.btnGerar;
+  document.getElementById('btn-print-top').textContent = t.btnPrint;
+  document.getElementById('btn-gerar-sb').textContent  = t.btnGerar;
+  document.getElementById('lbl-texto').textContent     = t.sTexto;
+  document.getElementById('lbl-texto-sub').textContent = t.sTextoSub;
+  document.getElementById('input-texto').placeholder   = t.ph;
+  document.getElementById('lbl-modo').textContent      = t.sModo;
+  document.getElementById('lbl-m-cursiva').textContent = t.mCursiva;
+  document.getElementById('lbl-m-forma').textContent   = t.mForma;
+  document.getElementById('lbl-fonte').textContent     = t.sFonte;
+  document.getElementById('lbl-tamanho').textContent   = t.sTam;
+  document.getElementById('lbl-tamanho-sub').textContent = t.sTamSub;
+  document.getElementById('lbl-linhas').textContent    = t.sLinhas;
+  document.getElementById('lbl-treino').textContent    = t.sTreino;
+  document.getElementById('lbl-tg').textContent  = t.tg;
+  document.getElementById('lbl-tg-d').textContent = t.tgD;
+  document.getElementById('lbl-tl').textContent  = t.tl;
+  document.getElementById('lbl-tl-d').textContent = t.tlD;
+  document.getElementById('lbl-tn').textContent  = t.tn;
+  document.getElementById('lbl-tn-d').textContent = t.tnD;
+  document.getElementById('empty-hint').textContent = t.empty;
+  document.getElementById('modo-desc').textContent = modo==='cursiva' ? t.descCursiva : t.descForma;
+  renderGrid();
+}
+
+/* ── mode ── */
+function selectModo(m){
+  modo = m;
+  document.getElementById('modo-cursiva').classList.toggle('active',m==='cursiva');
+  document.getElementById('modo-forma').classList.toggle('active',m==='forma');
+  const t = T[lang];
+  document.getElementById('modo-desc').textContent = m==='cursiva' ? t.descCursiva : t.descForma;
+  const r = document.getElementById('tamanho-fonte');
+  if(m==='forma'){ r.min=24;r.max=64;r.value=38; } else { r.min=16;r.max=52;r.value=28; }
+  syncFontSize(r.value);
+  renderGrid();
+}
+
+/* ── font grid ── */
+function renderGrid(){
+  const list = C[lang][modo];
+  loadFonts(list);
+  document.getElementById('font-grid').innerHTML = list.map((f,i)=>`
+    <div class="font-card${i===0?' active':''}" onclick="selFont(${i})" title="${f.d}">
+      ${f.b?`<span class="fc-badge">${f.b}</span>`:''}
+      <span class="fc-sample" style="font-family:${f.f};font-weight:${f.w};">${f.s}</span>
+      <span class="fc-name">${f.n}</span>
+    </div>`).join('');
+  fonte = list[0];
+}
+
+function selFont(i){
+  const list = C[lang][modo];
+  fonte = list[i];
+  document.querySelectorAll('.font-card').forEach((c,j)=>c.classList.toggle('active',j===i));
+}
+
+/* ── controls ── */
+function selectTipo(el){ document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); tipo=el.dataset.value; }
+function syncFontSize(v){ document.getElementById('label-tamanho').textContent=v+'px'; }
+function changeLines(d){ const i=document.getElementById('qtd-linhas'); i.value=Math.min(30,Math.max(1,+i.value+d)); }
+function changeZoom(d){
+  zoom=Math.min(150,Math.max(40,zoom+d));
+  document.getElementById('zoom-label').textContent=zoom+'%';
+  const w=document.getElementById('sheet-wrap'), sh=document.getElementById('folha');
+  w.style.transform=`scale(${zoom/100})`;
+  w.style.height=(sh.offsetHeight*zoom/100)+'px';
+  w.style.width=(794*zoom/100)+'px';
+}
+
+/* ── generate ── */
+function gerarCaligrafia(){
+  const t   = T[lang];
+  const txt = document.getElementById('input-texto').value.trim() || (modo==='forma' ? t.defForma : t.defCursiva);
+  const sz  = document.getElementById('tamanho-fonte').value;
+  const qtd = parseInt(document.getElementById('qtd-linhas').value)||4;
+  const lh  = Math.round(parseInt(sz)*1.6);
+  const gp  = Math.max(1,Math.round(parseInt(sz)*.06));
+  const hoje= new Date().toLocaleDateString(t.locale,{day:'2-digit',month:'long',year:'numeric'});
+  let html  = `<div class="sheet-header"><span class="sheet-title">${t.shTitle}</span><span class="sheet-date">${hoje}</span></div><div class="sheet-lines">`;
+  for(let i=0;i<qtd;i++){
+    html+=`<div class="line-block">`;
+    if(tipo==='guia')        html+=`<span class="text-line guide-text" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};line-height:${lh}px;">${esc(txt)}</span><span class="practice-line" style="height:${gp}px;"></span>`;
+    else if(tipo==='linha')  html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span><span class="blank-line" style="height:${gp}px;"></span>`;
+    else                     html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span>`;
+    html+=`</div>`;
   }
-  carregarFontes([...FONTES_CURSIVA, ...FONTES_FORMA]);
+  html+=`</div><div style="position:absolute;bottom:28px;right:40px;font-family:var(--font-mono);font-size:9px;color:#ccc;letter-spacing:.06em;">${fonte.n} · ${lang}</div>`;
+  document.getElementById('folha').innerHTML=html;
+  setTimeout(()=>changeZoom(0),50);
+}
 
-  /* ── Renderizar cards de fonte ── */
-  function renderFontGrid() {
-    const lista = modoAtual === 'cursiva' ? FONTES_CURSIVA : FONTES_FORMA;
-    const grid  = document.getElementById('font-grid');
-    grid.innerHTML = lista.map((f, i) => `
-      <div class="font-card ${i === 0 ? 'active' : ''}" onclick="selectFont(${i})" id="fc-${i}" title="${f.desc}">
-        ${f.badge ? `<span class="fc-badge">${f.badge}</span>` : ''}
-        <span class="sample" style="font-family:${f.familia}; font-weight:${f.peso};">${f.sample}</span>
-        <span class="font-name">${f.nome}</span>
-      </div>
-    `).join('');
-    fonteSelecionada = lista[0];
-  }
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function selectFont(idx) {
-    const lista = modoAtual === 'cursiva' ? FONTES_CURSIVA : FONTES_FORMA;
-    fonteSelecionada = lista[idx];
-    document.querySelectorAll('.font-card').forEach((c, i) => {
-      c.classList.toggle('active', i === idx);
-    });
-  }
-
-  /* ── Toggle de modo ── */
-  const MODO_DESC = {
-    cursiva: 'Escrita vertical ligada — modelo português (Porto Editora). Para crianças a partir do 1.º ano e adultos.',
-    forma:   'Letras impressas com formas simples — "a" e "g" manuscritos. Ideal para crianças a aprender o alfabeto (pré-escolar e 1.º ano).',
-  };
-
-  function selectModo(modo) {
-    modoAtual = modo;
-    document.getElementById('modo-cursiva').classList.toggle('active', modo === 'cursiva');
-    document.getElementById('modo-forma').classList.toggle('active', modo === 'forma');
-    document.getElementById('modo-desc').textContent = MODO_DESC[modo];
-    /* Ajustar range de tamanho: letra de forma para crianças é maior */
-    const range = document.getElementById('tamanho-fonte');
-    if (modo === 'forma') {
-      range.min   = 24;
-      range.max   = 64;
-      range.value = 38;
-    } else {
-      range.min   = 16;
-      range.max   = 52;
-      range.value = 28;
-    }
-    syncFontSize(range.value);
-    renderFontGrid();
-  }
-
-  /* ── Tipo de treino ── */
-  let tipoTreino = 'guia';
-  function selectTipo(el) {
-    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    tipoTreino = el.dataset.value;
-  }
-
-  /* ── Tamanho ── */
-  function syncFontSize(v) {
-    document.getElementById('label-tamanho').textContent = v + 'px';
-  }
-
-  /* ── Linhas ── */
-  function changeLines(delta) {
-    const input = document.getElementById('qtd-linhas');
-    const v = Math.min(30, Math.max(1, +input.value + delta));
-    input.value = v;
-  }
-
-  /* ── Zoom ── */
-  function changeZoom(delta) {
-    zoom = Math.min(150, Math.max(40, zoom + delta));
-    document.getElementById('zoom-label').textContent = zoom + '%';
-    const wrap  = document.getElementById('sheet-wrap');
-    const sheet = document.getElementById('folha');
-    wrap.style.transform = `scale(${zoom / 100})`;
-    const sh = sheet.offsetHeight;
-    wrap.style.height = (sh * zoom / 100) + 'px';
-    wrap.style.width  = (794 * zoom / 100) + 'px';
-  }
-
-  /* ── Gerar folha ── */
-  function gerarCaligrafia() {
-    const textoRaw = document.getElementById('input-texto').value.trim();
-    const texto    = textoRaw || (modoAtual === 'forma'
-      ? 'A B C D E F G H I J K L M'
-      : 'A raposa saltou sobre o cão preguiçoso.');
-    const tamanho  = document.getElementById('tamanho-fonte').value;
-    const qtd      = parseInt(document.getElementById('qtd-linhas').value) || 4;
-    const tipo     = tipoTreino;
-    const familia  = fonteSelecionada.familia;
-    const peso     = fonteSelecionada.peso;
-    const hoje     = new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'long', year:'numeric' });
-    const folha    = document.getElementById('folha');
-
-    /* Linha de base para pautas — proporcional ao tamanho */
-    const lh      = Math.round(parseInt(tamanho) * 1.6);
-    const guiaPx  = Math.max(1, Math.round(parseInt(tamanho) * 0.06));
-
-    let html = `
-      <div class="sheet-header">
-        <span class="sheet-title">Folha de caligrafia</span>
-        <span class="sheet-date">${hoje}</span>
-      </div>
-      <div class="sheet-lines">
-    `;
-
-    for (let i = 0; i < qtd; i++) {
-      html += `<div class="line-block">`;
-
-      if (tipo === 'guia') {
-        /* Texto cinza guia + linha de prática abaixo */
-        html += `
-          <span class="text-line guide-text"
-            style="font-size:${tamanho}px; font-family:${familia}; font-weight:${peso}; line-height:${lh}px;"
-          >${escapeHtml(texto)}</span>
-          <span class="practice-line" style="height:${guiaPx}px;"></span>
-        `;
-      } else if (tipo === 'linha') {
-        /* Só pauta, sem texto */
-        html += `
-          <span class="text-line"
-            style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
-          <span class="blank-line" style="height:${guiaPx}px;"></span>
-        `;
-      } else {
-        /* Papel limpo */
-        html += `
-          <span class="text-line"
-            style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
-        `;
-      }
-
-      html += `</div>`;
-    }
-
-    html += `</div>`;
-
-    /* Rodapé discreto com o nome da fonte usada */
-    html += `
-      <div style="position:absolute; bottom:28px; right:40px;
-                  font-family:var(--font-mono); font-size:9px; color:#ccc; letter-spacing:.06em;">
-        ${fonteSelecionada.nome} · ${modoAtual === 'cursiva' ? 'cursiva' : 'letra de forma'}
-      </div>
-    `;
-
-    folha.innerHTML = html;
-    setTimeout(changeZoom.bind(null, 0), 50);
-  }
-
-  function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  /* ── Init ── */
-  renderFontGrid();
-  changeZoom(0);
+/* ── init ── */
+preload();
+selectLang('pt-PT');
+changeZoom(0);
 </script>
 </body>
 </html>
