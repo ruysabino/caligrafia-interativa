@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Caligrafia Interativa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&family=Playwrite+PT:wght@100..400&family=Playwrite+PT+Guides&family=Andika&display=swap" rel="stylesheet">
 
   <style>
     /* ── Reset & tokens ── */
@@ -213,6 +213,7 @@
       cursor: pointer;
       transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
       text-align: left;
+      position: relative;
     }
     .font-card:hover {
       background: var(--accent-bg);
@@ -235,6 +236,64 @@
       font-size: 10px;
       color: var(--ink-3);
       letter-spacing: .05em;
+    }
+    /* Badge "PT" nas fontes recomendadas */
+    .font-card .fc-badge {
+      position: absolute;
+      top: 6px; right: 6px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 4px;
+      padding: 1px 5px;
+      line-height: 1.6;
+    }
+
+    /* ── Toggle de modo (Cursiva / Letra de Forma) ── */
+    .mode-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 0;
+    }
+    .mode-btn {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 8px;
+      border-radius: 8px;
+      border: 1.5px solid var(--paper-3);
+      background: var(--paper-2);
+      color: var(--ink-3);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.2;
+    }
+    .mode-btn .mode-icon { font-size: 18px; line-height: 1; }
+    .mode-btn:hover { background: var(--accent-bg); border-color: var(--accent-2); color: var(--ink); }
+    .mode-btn.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(192,57,43,.10);
+    }
+    .mode-desc {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 8px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      background: var(--paper-2);
+      border-radius: 6px;
+      border: 1px solid var(--paper-3);
     }
 
     /* Slider row */
@@ -599,13 +658,29 @@
       <p class="section-title">Texto</p>
       <div class="field">
         <label for="input-texto">Conteúdo para praticar</label>
-        <textarea id="input-texto" rows="4" placeholder="Ex: A raposa marrom saltou sobre o cão preguiçoso..."></textarea>
+        <textarea id="input-texto" rows="4" placeholder="Ex: A raposa saltou sobre o cão preguiçoso..."></textarea>
       </div>
+    </div>
+
+    <!-- Modo de escrita -->
+    <div class="sidebar-section">
+      <p class="section-title">Modo de escrita</p>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modo-cursiva" onclick="selectModo('cursiva')">
+          <span class="mode-icon">✒</span>
+          Cursiva
+        </button>
+        <button class="mode-btn" id="modo-forma" onclick="selectModo('forma')">
+          <span class="mode-icon">Aa</span>
+          Letra de Forma
+        </button>
+      </div>
+      <p class="mode-desc" id="modo-desc">Escrita vertical ligada — modelo português (Porto Editora). Para crianças a partir do 1.º ano e adultos.</p>
     </div>
 
     <!-- Fonte -->
     <div class="sidebar-section">
-      <p class="section-title">Fonte caligráfica</p>
+      <p class="section-title">Fonte</p>
       <div class="font-grid" id="font-grid">
         <!-- populated by JS -->
       </div>
@@ -702,45 +777,167 @@
 </div>
 
 <script>
-  /* ── Fontes disponíveis ── */
-  const FONTES = [
-    { nome: 'Sacramento',    url: 'Sacramento',    sample: 'Aa', familia: "'Sacramento', cursive" },
-    { nome: 'Dancing Script',url: 'Dancing+Script',sample: 'Aa', familia: "'Dancing Script', cursive" },
-    { nome: 'Pacifico',      url: 'Pacifico',      sample: 'Aa', familia: "'Pacifico', cursive" },
-    { nome: 'Satisfy',       url: 'Satisfy',       sample: 'Aa', familia: "'Satisfy', cursive" },
-    { nome: 'Pinyon Script', url: 'Pinyon+Script', sample: 'Aa', familia: "'Pinyon Script', cursive" },
-    { nome: 'Great Vibes',   url: 'Great+Vibes',   sample: 'Aa', familia: "'Great Vibes', cursive" },
+  /* ── Catálogo de fontes por modo ── */
+  const FONTES_CURSIVA = [
+    {
+      nome: 'Playwrite PT',
+      url:  'Playwrite+PT:wght@100..400',
+      sample: 'Aa',
+      familia: "'Playwrite PT', cursive",
+      peso: '200',
+      badge: 'PT',
+      desc: 'Modelo oficial português — escrita vertical ligada (Porto Editora)'
+    },
+    {
+      nome: 'Playwrite PT Guides',
+      url:  'Playwrite+PT+Guides',
+      sample: 'Aa',
+      familia: "'Playwrite PT Guides', cursive",
+      peso: '400',
+      badge: 'PT',
+      desc: 'Igual ao Playwrite PT mas com pautas integradas nos glifos — ideal para decalcar'
+    },
+    {
+      nome: 'Dancing Script',
+      url:  'Dancing+Script:wght@400',
+      sample: 'Aa',
+      familia: "'Dancing Script', cursive",
+      peso: '400',
+      badge: null,
+      desc: 'Cursiva inclinada de origem americana'
+    },
+    {
+      nome: 'Great Vibes',
+      url:  'Great+Vibes',
+      sample: 'Aa',
+      familia: "'Great Vibes', cursive",
+      peso: '400',
+      badge: null,
+      desc: 'Cursiva ornamentada, estilo caligrafia formal'
+    },
+    {
+      nome: 'Pinyon Script',
+      url:  'Pinyon+Script',
+      sample: 'Aa',
+      familia: "'Pinyon Script', cursive",
+      peso: '400',
+      badge: null,
+      desc: 'Cursiva elegante de estilo copperplate'
+    },
+    {
+      nome: 'Satisfy',
+      url:  'Satisfy',
+      sample: 'Aa',
+      familia: "'Satisfy', cursive",
+      peso: '400',
+      badge: null,
+      desc: 'Cursiva descontraída e legível'
+    },
   ];
 
-  let fonteSelecionada = FONTES[0];
-  let zoom = 75;
+  const FONTES_FORMA = [
+    {
+      nome: 'Andika',
+      url:  'Andika',
+      sample: 'Aa',
+      familia: "'Andika', sans-serif",
+      peso: '400',
+      badge: '↗',
+      desc: 'Desenhada para alfabetização — "a" e "g" com forma manuscrita simples (SIL International)'
+    },
+    {
+      nome: 'Atkinson Hyperlegible',
+      url:  'Atkinson+Hyperlegible',
+      sample: 'Aa',
+      familia: "'Atkinson Hyperlegible', sans-serif",
+      peso: '400',
+      badge: null,
+      desc: 'Alta legibilidade, letras com formas distintas — boa para crianças com dislexia'
+    },
+    {
+      nome: 'Nunito',
+      url:  'Nunito:wght@400',
+      sample: 'Aa',
+      familia: "'Nunito', sans-serif",
+      peso: '400',
+      badge: null,
+      desc: 'Arredondada e amigável, boa leiturabilidade para iniciantes'
+    },
+    {
+      nome: 'Quicksand',
+      url:  'Quicksand:wght@400',
+      sample: 'Aa',
+      familia: "'Quicksand', sans-serif",
+      peso: '400',
+      badge: null,
+      desc: 'Geométrica e limpa, traços simples'
+    },
+  ];
 
-  /* Carregar fontes do Google */
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://fonts.googleapis.com/css2?family=' +
-    FONTES.map(f => f.url + ':wght@400').join('&family=') + '&display=swap';
-  document.head.appendChild(link);
+  /* ── Estado global ── */
+  let modoAtual        = 'cursiva';
+  let fonteSelecionada = FONTES_CURSIVA[0];
+  let zoom             = 75;
 
-  /* Renderizar cards de fonte */
+  /* ── Carregar fontes extras (para além das do <link> estático) ── */
+  function carregarFontes(lista) {
+    const families = lista.map(f => f.url).join('&family=');
+    const l = document.createElement('link');
+    l.rel  = 'stylesheet';
+    l.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
+    document.head.appendChild(l);
+  }
+  carregarFontes([...FONTES_CURSIVA, ...FONTES_FORMA]);
+
+  /* ── Renderizar cards de fonte ── */
   function renderFontGrid() {
-    const grid = document.getElementById('font-grid');
-    grid.innerHTML = FONTES.map((f, i) => `
-      <div class="font-card ${i === 0 ? 'active' : ''}" onclick="selectFont(${i})" id="fc-${i}">
-        <span class="sample" style="font-family:${f.familia}">${f.sample}</span>
+    const lista = modoAtual === 'cursiva' ? FONTES_CURSIVA : FONTES_FORMA;
+    const grid  = document.getElementById('font-grid');
+    grid.innerHTML = lista.map((f, i) => `
+      <div class="font-card ${i === 0 ? 'active' : ''}" onclick="selectFont(${i})" id="fc-${i}" title="${f.desc}">
+        ${f.badge ? `<span class="fc-badge">${f.badge}</span>` : ''}
+        <span class="sample" style="font-family:${f.familia}; font-weight:${f.peso};">${f.sample}</span>
         <span class="font-name">${f.nome}</span>
       </div>
     `).join('');
+    fonteSelecionada = lista[0];
   }
 
   function selectFont(idx) {
-    fonteSelecionada = FONTES[idx];
+    const lista = modoAtual === 'cursiva' ? FONTES_CURSIVA : FONTES_FORMA;
+    fonteSelecionada = lista[idx];
     document.querySelectorAll('.font-card').forEach((c, i) => {
       c.classList.toggle('active', i === idx);
     });
   }
 
-  /* Tipo de treino */
+  /* ── Toggle de modo ── */
+  const MODO_DESC = {
+    cursiva: 'Escrita vertical ligada — modelo português (Porto Editora). Para crianças a partir do 1.º ano e adultos.',
+    forma:   'Letras impressas com formas simples — "a" e "g" manuscritos. Ideal para crianças a aprender o alfabeto (pré-escolar e 1.º ano).',
+  };
+
+  function selectModo(modo) {
+    modoAtual = modo;
+    document.getElementById('modo-cursiva').classList.toggle('active', modo === 'cursiva');
+    document.getElementById('modo-forma').classList.toggle('active', modo === 'forma');
+    document.getElementById('modo-desc').textContent = MODO_DESC[modo];
+    /* Ajustar range de tamanho: letra de forma para crianças é maior */
+    const range = document.getElementById('tamanho-fonte');
+    if (modo === 'forma') {
+      range.min   = 24;
+      range.max   = 64;
+      range.value = 38;
+    } else {
+      range.min   = 16;
+      range.max   = 52;
+      range.value = 28;
+    }
+    syncFontSize(range.value);
+    renderFontGrid();
+  }
+
+  /* ── Tipo de treino ── */
   let tipoTreino = 'guia';
   function selectTipo(el) {
     document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -748,26 +945,25 @@
     tipoTreino = el.dataset.value;
   }
 
-  /* Tamanho */
+  /* ── Tamanho ── */
   function syncFontSize(v) {
     document.getElementById('label-tamanho').textContent = v + 'px';
   }
 
-  /* Linhas */
+  /* ── Linhas ── */
   function changeLines(delta) {
     const input = document.getElementById('qtd-linhas');
     const v = Math.min(30, Math.max(1, +input.value + delta));
     input.value = v;
   }
 
-  /* Zoom */
+  /* ── Zoom ── */
   function changeZoom(delta) {
     zoom = Math.min(150, Math.max(40, zoom + delta));
     document.getElementById('zoom-label').textContent = zoom + '%';
-    document.getElementById('sheet-wrap').style.transform = `scale(${zoom / 100})`;
-    /* Ajusta altura do wrapper para não colapsar com scale */
-    const wrap = document.getElementById('sheet-wrap');
+    const wrap  = document.getElementById('sheet-wrap');
     const sheet = document.getElementById('folha');
+    wrap.style.transform = `scale(${zoom / 100})`;
     const sh = sheet.offsetHeight;
     wrap.style.height = (sh * zoom / 100) + 'px';
     wrap.style.width  = (794 * zoom / 100) + 'px';
@@ -775,13 +971,21 @@
 
   /* ── Gerar folha ── */
   function gerarCaligrafia() {
-    const texto    = document.getElementById('input-texto').value.trim() || 'Pratique sua caligrafia aqui...';
+    const textoRaw = document.getElementById('input-texto').value.trim();
+    const texto    = textoRaw || (modoAtual === 'forma'
+      ? 'A B C D E F G H I J K L M'
+      : 'A raposa saltou sobre o cão preguiçoso.');
     const tamanho  = document.getElementById('tamanho-fonte').value;
     const qtd      = parseInt(document.getElementById('qtd-linhas').value) || 4;
     const tipo     = tipoTreino;
     const familia  = fonteSelecionada.familia;
-    const hoje     = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+    const peso     = fonteSelecionada.peso;
+    const hoje     = new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'long', year:'numeric' });
     const folha    = document.getElementById('folha');
+
+    /* Linha de base para pautas — proporcional ao tamanho */
+    const lh      = Math.round(parseInt(tamanho) * 1.6);
+    const guiaPx  = Math.max(1, Math.round(parseInt(tamanho) * 0.06));
 
     let html = `
       <div class="sheet-header">
@@ -792,22 +996,28 @@
     `;
 
     for (let i = 0; i < qtd; i++) {
-      const lh = Math.round(parseInt(tamanho) * 1.55);
       html += `<div class="line-block">`;
 
       if (tipo === 'guia') {
+        /* Texto cinza guia + linha de prática abaixo */
         html += `
-          <span class="text-line guide-text" style="font-size:${tamanho}px; font-family:${familia}; line-height:${lh}px;">${escapeHtml(texto)}</span>
-          <span class="practice-line"></span>
+          <span class="text-line guide-text"
+            style="font-size:${tamanho}px; font-family:${familia}; font-weight:${peso}; line-height:${lh}px;"
+          >${escapeHtml(texto)}</span>
+          <span class="practice-line" style="height:${guiaPx}px;"></span>
         `;
       } else if (tipo === 'linha') {
+        /* Só pauta, sem texto */
         html += `
-          <span class="text-line" style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
-          <span class="blank-line"></span>
+          <span class="text-line"
+            style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
+          <span class="blank-line" style="height:${guiaPx}px;"></span>
         `;
       } else {
+        /* Papel limpo */
         html += `
-          <span class="text-line" style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
+          <span class="text-line"
+            style="font-size:${tamanho}px; line-height:${lh}px;">&nbsp;</span>
         `;
       }
 
@@ -815,9 +1025,16 @@
     }
 
     html += `</div>`;
-    folha.innerHTML = html;
 
-    /* Reajusta zoom wrapper */
+    /* Rodapé discreto com o nome da fonte usada */
+    html += `
+      <div style="position:absolute; bottom:28px; right:40px;
+                  font-family:var(--font-mono); font-size:9px; color:#ccc; letter-spacing:.06em;">
+        ${fonteSelecionada.nome} · ${modoAtual === 'cursiva' ? 'cursiva' : 'letra de forma'}
+      </div>
+    `;
+
+    folha.innerHTML = html;
     setTimeout(changeZoom.bind(null, 0), 50);
   }
 
