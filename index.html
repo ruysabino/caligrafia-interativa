@@ -194,6 +194,26 @@
     .sheet.rtl .seyès-margin { left:auto; right:60px; border-left:none; border-right:1.5px solid #e88080; }
     .sheet.rtl .seyès-guide { padding:0 66px 0 6px; }
 
+    /* ── Sub-toggle: repetição do texto guia ── */
+    .guia-repeat-wrap {
+      display: none; margin-top: 8px; padding: 9px 10px;
+      background: var(--accent-bg); border: 1px solid var(--accent-2);
+      border-radius: 8px; gap: 5px; flex-direction: column;
+    }
+    .guia-repeat-wrap.visible { display: flex; }
+    .guia-repeat-label { font-size: 11px; font-weight: 600; color: var(--ink-2); margin-bottom: 2px; }
+    .repeat-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .repeat-btn {
+      font-family: var(--font-ui); font-size: 11px; font-weight: 600;
+      padding: 7px 6px; border-radius: 7px; border: 1.5px solid var(--paper-3);
+      background: var(--paper); color: var(--ink-3); cursor: pointer;
+      text-align: center; transition: all var(--tr);
+      display: flex; flex-direction: column; align-items: center; gap: 3px; line-height: 1.2;
+    }
+    .repeat-btn .ri { font-size: 15px; line-height: 1; }
+    .repeat-btn:hover  { background: #fff; border-color: var(--accent-2); color: var(--ink); }
+    .repeat-btn.active { background: #fff; border-color: var(--accent); color: var(--ink); box-shadow: 0 0 0 2px rgba(192,57,43,.12); }
+
     /* ══ CJK MODULE ══════════════════════════════════════════ */
 
     /* Topbar CJK toggle pill */
@@ -539,6 +559,20 @@
         <div class="pill active" data-value="guia" onclick="selectTipo(this)">
           <div class="pill-icon">✦</div>
           <div><div class="pill-label" id="lbl-tg">Texto guia</div><div class="pill-desc" id="lbl-tg-d">Letra cinza para decalcar</div></div>
+        </div>
+        <!-- Sub-toggle repetição — aparece quando "Texto guia" está activo -->
+        <div class="guia-repeat-wrap visible" id="guia-repeat-wrap">
+          <div class="guia-repeat-label" id="lbl-repeat-titulo">Repetição do guia</div>
+          <div class="repeat-opts">
+            <button class="repeat-btn active" id="rep-todas" onclick="selectRepeat('todas')">
+              <span class="ri">≡</span>
+              <span id="lbl-rep-todas">Todas as linhas</span>
+            </button>
+            <button class="repeat-btn" id="rep-primeira" onclick="selectRepeat('primeira')">
+              <span class="ri">⊤</span>
+              <span id="lbl-rep-primeira">Só a primeira</span>
+            </button>
+          </div>
         </div>
         <div class="pill" data-value="linha" onclick="selectTipo(this)">
           <div class="pill-icon">━</div>
@@ -908,10 +942,21 @@ function selFont(i){
 }
 
 /* ── controls ── */
+let guiaRepeat = 'todas'; /* 'todas' | 'primeira' */
+
+function selectRepeat(opt){
+  guiaRepeat = opt;
+  document.getElementById('rep-todas').classList.toggle('active',    opt==='todas');
+  document.getElementById('rep-primeira').classList.toggle('active', opt==='primeira');
+}
+
 function selectTipo(el){
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
-  tipo=el.dataset.value;
+  tipo = el.dataset.value;
+  /* mostrar/ocultar sub-toggle de repetição apenas quando guia está activo */
+  const wrap = document.getElementById('guia-repeat-wrap');
+  if(wrap) wrap.classList.toggle('visible', tipo==='guia');
 }
 function syncFontSize(v){ document.getElementById('label-tamanho').textContent=v+'px'; }
 function changeLines(d){ const i=document.getElementById('qtd-linhas'); i.value=Math.min(30,Math.max(1,+i.value+d)); }
@@ -959,15 +1004,27 @@ function gerarCaligrafia(){
 
   for(let i=0;i<qtd;i++){
     if(tipo==='seyes'){
-      /* Pauta Séyès: bloco CSS com guia opcional */
+      /* Pauta Séyès: guia só na primeira linha se repeat==='primeira' */
+      const mostrarGuia = txt && (guiaRepeat==='todas' || i===0);
       html+=`<div class="seyès-block" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};">
         <span class="seyès-lines" style="height:${Math.max(32,lh)}px;"></span>
         <span class="seyès-margin"></span>
-        ${txt ? `<span class="seyès-guide" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};">${esc(txt)}</span>` : ''}
+        ${mostrarGuia ? `<span class="seyès-guide" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};">${esc(txt)}</span>` : ''}
       </div>`;
     } else {
       html+=`<div class="line-block">`;
-      if(tipo==='guia')       html+=`<span class="text-line guide-text" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};line-height:${lh}px;direction:${isRTL?'rtl':'ltr'};text-align:${isRTL?'right':'left'};">${esc(txt)}</span><span class="practice-line" style="height:${gp}px;"></span>`;
+      if(tipo==='guia'){
+        /* Lógica de repetição:
+           'todas'    → guia em todas as linhas
+           'primeira' → guia só na linha 0; restantes ficam como pauta em branco */
+        const mostrarGuia = guiaRepeat==='todas' || i===0;
+        if(mostrarGuia){
+          html+=`<span class="text-line guide-text" style="font-size:${sz}px;font-family:${fonte.f};font-weight:${fonte.w};line-height:${lh}px;direction:${isRTL?'rtl':'ltr'};text-align:${isRTL?'right':'left'};">${esc(txt)}</span>`;
+        } else {
+          html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span>`;
+        }
+        html+=`<span class="practice-line" style="height:${gp}px;"></span>`;
+      }
       else if(tipo==='linha') html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span><span class="blank-line" style="height:${gp}px;"></span>`;
       else                    html+=`<span class="text-line" style="font-size:${sz}px;line-height:${lh}px;">&nbsp;</span>`;
       html+=`</div>`;
