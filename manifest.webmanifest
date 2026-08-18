@@ -1,0 +1,14 @@
+{
+  "name": "Caligrafia Interativa",
+  "short_name": "Caligrafia",
+  "description": "Gerador de folhas de caligrafia multilingues, prontas a imprimir.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1a1513",
+  "theme_color": "#c0392b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

@@ -2,7 +2,7 @@
 
 > Gerador de folhas de caligrafia para impressão — multilíngue, com modelos caligráficos oficiais por país e suporte pedagógico para escrita cursiva e letra de forma.
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![HTML](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](https://developer.mozilla.org/pt-PT/docs/Web/HTML)
 [![CSS](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](https://developer.mozilla.org/pt-PT/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-PT/docs/Web/JavaScript)
@@ -74,16 +74,20 @@ https://ruysabino.github.io/caligrafia-interativa/
 
 ## 🌍 Internacionalização
 
-A aplicação suporta **6 idiomas** com toda a interface traduzida e fontes caligráficas adequadas a cada país. A seleção é feita através de **botões com bandeiras SVG** na topbar.
+A aplicação suporta **8 idiomas** com toda a interface traduzida e fontes caligráficas adequadas a cada país, incluindo **dois idiomas RTL** (direita-para-a-esquerda). A seleção é feita através de **botões com bandeiras SVG** na topbar.
 
-| Bandeira | Idioma | Locale | Pangrama padrão |
-|:---:|---|---|---|
-| 🇵🇹 | Português (Portugal) | `pt-PT` | *A raposa saltou sobre o cão preguiçoso.* |
-| 🇧🇷 | Português (Brasil) | `pt-BR` | *A raposa marrom saltou sobre o cão preguiçoso.* |
-| 🇪🇸 | Español | `es-ES` | *El veloz murciélago hindú comía feliz cardillo y kiwi.* |
-| 🇬🇧 | English (UK) | `en-GB` | *The quick brown fox jumps over the lazy dog.* |
-| 🇫🇷 | Français | `fr-FR` | *Portez ce vieux whisky au juge blond qui fume.* |
-| 🇩🇪 | Deutsch | `de-DE` | *Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich.* |
+| Bandeira | Idioma | Locale | Direção | Pangrama padrão |
+|:---:|---|---|:---:|---|
+| 🇵🇹 | Português (Portugal) | `pt-PT` | LTR | *A raposa saltou sobre o cão preguiçoso.* |
+| 🇧🇷 | Português (Brasil) | `pt-BR` | LTR | *A raposa marrom saltou sobre o cão preguiçoso.* |
+| 🇪🇸 | Español | `es-ES` | LTR | *El veloz murciélago hindú comía feliz cardillo y kiwi.* |
+| 🇬🇧 | English (UK) | `en-GB` | LTR | *The quick brown fox jumps over the lazy dog.* |
+| 🇫🇷 | Français | `fr-FR` | LTR | *Portez ce vieux whisky au juge blond qui fume.* |
+| 🇩🇪 | Deutsch | `de-DE` | LTR | *Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich.* |
+| 🇸🇦 | العربية (Árabe) | `ar` | **RTL** | Pangrama árabe com diacríticos (tashkeel) |
+| 🇮🇱 | עברית (Hebraico) | `he` | **RTL** | Pangrama hebraico |
+
+> Os idiomas RTL invertem automaticamente o sentido da pauta e do texto guia (`dir="rtl"`), tanto no ecrã como na impressão.
 
 Ao mudar de idioma, actualizam-se automaticamente:
 - Todo o texto da interface (labels, botões, placeholders, descrições)
@@ -179,6 +183,18 @@ Todas as fontes **Playwrite** são desenvolvidas pelo projeto [Primarium](https:
 
 ---
 
+### Fontes para idiomas RTL (árabe e hebraico)
+
+| Fonte | Idioma | Notas |
+|---|---|---|
+| **Amiri** | Árabe | Naskh clássico para educação — suporta todos os diacríticos (*tashkeel*) |
+| **Scheherazade New** | Árabe | Desenhada pela SIL para alfabetização — o equivalente árabe do Andika |
+| **Noto Naskh Arabic** | Árabe | Boa cobertura e múltiplos pesos |
+| **Frank Ruhl Libre** | Hebraico | Serif clássica hebraica, estilo formal |
+| **Rubik** | Hebraico | Geométrica, arredondada e muito legível |
+
+---
+
 ## 📝 Modos de escrita
 
 ### Cursiva
@@ -267,15 +283,22 @@ Não é necessário `npm install`, servidor ou qualquer dependência. O projeto 
 
 ```
 caligrafia-interativa/
-├── index.html          # Aplicação completa (HTML + CSS + JS num só ficheiro)
-├── fonts/              # Fontes locais (fallback opcional)
-├── .nojekyll           # Desativa processamento Jekyll no GitHub Pages
-├── .gitattributes      # Configuração de line endings
-├── LICENSE             # GNU General Public License v3.0
-└── README.md           # Esta documentação
+├── index.html              # Aplicação completa (HTML + CSS + JS num só ficheiro)
+├── manifest.webmanifest    # Metadados PWA (instalável no telemóvel/desktop)
+├── icon.svg                # Ícone vetorial da aplicação
+├── icon-192.png            # Ícone PWA 192×192
+├── icon-512.png            # Ícone PWA 512×512
+├── favicon.png             # Favicon
+├── .nojekyll               # Desativa processamento Jekyll no GitHub Pages
+├── .gitattributes          # Configuração de line endings
+├── LICENSE                 # Licença MIT
+├── THIRD-PARTY.md          # Fontes de terceiros e respetivas licenças
+└── README.md               # Esta documentação
 ```
 
 > A aplicação é intencionalmente um ficheiro HTML único (`index.html`) — sem bundler, sem framework, sem build step. Funciona offline depois do primeiro carregamento (as fontes do Google Fonts são cacheadas pelo browser).
+>
+> **Não há pasta `fonts/`.** Todas as fontes são carregadas do Google Fonts em runtime; o projeto não redistribui ficheiros tipográficos.
 
 ---
 
@@ -311,8 +334,10 @@ As fontes Playwrite são resultado de 3+ anos de investigação do projeto [Prim
 | JavaScript ES6+ (vanilla) | Lógica de geração e internacionalização |
 | [Google Fonts — Playwrite](https://fonts.google.com/?query=playwrite) | Fontes caligráficas oficiais por país |
 | [Google Fonts — Andika](https://fonts.google.com/specimen/Andika) | Fonte para letra de forma / alfabetização |
+| [Google Fonts — Amiri / Scheherazade New / Frank Ruhl Libre / Rubik](THIRD-PARTY.md) | Fontes árabes e hebraicas |
 | SVG inline | Bandeiras dos países (sem dependências externas) |
 | CSS `@media print` | Folha A4 optimizada para impressão |
+| Web App Manifest | Instalação como PWA |
 
 **Sem dependências externas de JavaScript.** Sem npm, sem webpack, sem React. O projeto inteiro funciona abrindo o `index.html` diretamente no browser.
 
@@ -329,7 +354,7 @@ Ideias para versões futuras:
 - [ ] Múltiplos blocos de texto na mesma folha
 - [ ] Pauta Séyès (formato francês com linhas horizontais e margem vertical)
 - [ ] Seletor visual de fontes com amostra de frase completa
-- [ ] Suporte a RTL (árabe, hebraico) com modelos Playwrite correspondentes
+- [ ] Mais idiomas (italiano, neerlandês, polaco) com os modelos Playwrite correspondentes
 
 ---
 
@@ -349,10 +374,11 @@ Para reportar bugs ou sugerir funcionalidades, abra uma [issue](https://github.c
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a [GNU General Public License v3.0](LICENSE).
+O código deste projeto está licenciado sob a [Licença MIT](LICENSE) — podes usar, copiar, modificar e redistribuir livremente, inclusive em contexto comercial ou escolar, bastando manter o aviso de copyright.
 
-As fontes Playwrite são criadas pela TypeTogether × Google e distribuídas sob a [SIL Open Font License 1.1](https://openfontlicense.org/).  
-A fonte Andika é criada pela SIL International e distribuída sob a [SIL Open Font License 1.1](https://openfontlicense.org/).
+> A licença foi alterada de GPL-3.0 para MIT para que professores, escolas e editoras possam adaptar e redistribuir o gerador sem a obrigação de abrir o código dos seus próprios materiais.
+
+**Fontes.** O projeto **não distribui ficheiros de fontes** — todas são carregadas em runtime a partir do Google Fonts e mantêm as licenças dos respetivos autores (SIL Open Font License 1.1). Ver [THIRD-PARTY.md](THIRD-PARTY.md) para a lista completa, autores e atribuições.
 
 ---
 
