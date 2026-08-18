@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caligrafia Interativa</title>
+  <title>Caligrafia Interativa — Gerador de folhas de escrita</title>
+  <meta name="description" content="Gerador gratuito de folhas de caligrafia em PT, BR, ES, EN, FR, DE, árabe e hebraico. Escolha fonte, tamanho, pauta e exporte em PDF ou PNG.">
+  <meta name="theme-color" content="#c0392b">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta property="og:title" content="Caligrafia Interativa">
+  <meta property="og:description" content="Gerador gratuito de folhas de caligrafia multilingues, prontas a imprimir.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -446,30 +456,8 @@
         <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#fff"/><rect y="2.5" width="24" height="3" fill="#0038B8"/><rect y="12.5" width="24" height="3" fill="#0038B8"/><polygon points="12,6.5 14.6,11 9.4,11" fill="none" stroke="#0038B8" stroke-width="1"/><polygon points="12,11.5 14.6,7 9.4,7" fill="none" stroke="#0038B8" stroke-width="1"/></svg>
         <span class="lang-tip">עברית</span>
       </button>
-      <!-- separador CJK -->
-      <span style="width:1px;height:16px;background:rgba(255,255,255,.15);margin:0 2px;display:inline-block;"></span>
-      <!-- Japão -->
-      <button class="lang-btn" data-lang="ja" onclick="selectLang('ja')">
-        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#fff"/><circle cx="12" cy="9" r="4.5" fill="#BC002D"/></svg>
-        <span class="lang-tip">日本語</span>
-      </button>
-      <!-- China -->
-      <button class="lang-btn" data-lang="zh" onclick="selectLang('zh')">
-        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#DE2910"/><polygon points="3,2 4.2,5.5 7.5,5.5 4.8,7.5 5.8,11 3,9 0.2,11 1.2,7.5 -1.5,5.5 1.8,5.5" fill="#FFDE00" transform="translate(3,1) scale(0.8)"/></svg>
-        <span class="lang-tip">中文</span>
-      </button>
-      <!-- Coreia -->
-      <button class="lang-btn" data-lang="ko" onclick="selectLang('ko')">
-        <svg viewBox="0 0 24 18"><rect width="24" height="18" fill="#fff"/><circle cx="12" cy="9" r="3.5" fill="none"/><path d="M9.5,7 Q12,4 14.5,7 Q12,10 9.5,7Z" fill="#C60C30"/><path d="M9.5,11 Q12,8 14.5,11 Q12,14 9.5,11Z" fill="#003478"/><line x1="3" y1="4" x2="6" y2="3" stroke="#000" stroke-width=".6"/><line x1="3" y1="5.5" x2="6" y2="4.5" stroke="#000" stroke-width=".6"/><line x1="18" y1="4" x2="21" y2="3" stroke="#000" stroke-width=".6"/><line x1="18" y1="5.5" x2="21" y2="4.5" stroke="#000" stroke-width=".6"/></svg>
-        <span class="lang-tip">한국어</span>
-      </button>
     </div>
 
-    <!-- App mode toggle: Caligrafia ↔ Grelha CJK -->
-    <div class="app-mode-bar" id="app-mode-bar" style="display:none;">
-      <button class="app-mode-btn active" id="appmode-ltr" onclick="setAppMode('ltr')">✒ Caligrafia</button>
-      <button class="app-mode-btn" id="appmode-cjk" onclick="setAppMode('cjk')">田 Grelha</button>
-    </div>
   </div>
 
   <div class="topbar-actions">
@@ -596,86 +584,6 @@
       </button>
     </div>
 
-    <!-- ══ CJK sidebar ══════════════════════════════════════ -->
-    <div class="sb cjk-only">
-      <p class="sec-title" id="lbl-cjk-chars">Caracteres / Texto guia</p>
-      <label id="lbl-cjk-chars-sub">Introduzir caracteres</label>
-      <textarea id="cjk-input" rows="3" placeholder="例: あいうえお / 永字八法 / 가나다라"></textarea>
-    </div>
-
-    <div class="sb cjk-only">
-      <p class="sec-title" id="lbl-grid-type">Tipo de grelha</p>
-      <div class="grid-type-group">
-        <button class="grid-type-btn active" data-grid="genkou" onclick="selectGrid(this)">
-          <div class="gtb-icon">原</div>
-          <div>
-            <div class="gtb-label" id="lbl-gt-genkou">Genkouyoushi</div>
-            <div class="gtb-desc" id="lbl-gt-genkou-d">原稿用紙 — quadrados com guia central</div>
-          </div>
-        </button>
-        <button class="grid-type-btn" data-grid="tian" onclick="selectGrid(this)">
-          <div class="gtb-icon">田</div>
-          <div>
-            <div class="gtb-label" id="lbl-gt-tian">Tian Zi Ge</div>
-            <div class="gtb-desc" id="lbl-gt-tian-d">田字格 — quadrantes para hanzi/kanji</div>
-          </div>
-        </button>
-        <button class="grid-type-btn" data-grid="hangul" onclick="selectGrid(this)">
-          <div class="gtb-icon">가</div>
-          <div>
-            <div class="gtb-label" id="lbl-gt-hangul">Grelha Hangul</div>
-            <div class="gtb-desc" id="lbl-gt-hangul-d">격자 — blocos silábicos coreanos</div>
-          </div>
-        </button>
-      </div>
-    </div>
-
-    <div class="sb cjk-only" id="sb-tategaki-wrap">
-      <p class="sec-title" id="lbl-dir">Direcção da escrita</p>
-      <div class="dir-toggle">
-        <button class="dir-btn active" id="dir-yoko" onclick="selectDir('yoko')">
-          <span class="di">↔</span><span id="lbl-dir-yoko">Yokogaki</span>
-        </button>
-        <button class="dir-btn" id="dir-tate" onclick="selectDir('tate')">
-          <span class="di">↕</span><span id="lbl-dir-tate">Tategaki</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="sb cjk-only">
-      <p class="sec-title" id="lbl-cjk-fonte">Fonte</p>
-      <div class="glyph-grid" id="cjk-font-grid"></div>
-    </div>
-
-    <div class="sb cjk-only">
-      <p class="sec-title" id="lbl-cjk-cols">Colunas × Linhas</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div>
-          <label id="lbl-cols">Colunas</label>
-          <div class="num-field">
-            <button class="num-btn" onclick="changeCJK('cols',-1)">−</button>
-            <input type="number" id="cjk-cols" min="4" max="20" value="12">
-            <button class="num-btn" onclick="changeCJK('cols',1)">+</button>
-          </div>
-        </div>
-        <div>
-          <label id="lbl-rows">Linhas</label>
-          <div class="num-field">
-            <button class="num-btn" onclick="changeCJK('rows',-1)">−</button>
-            <input type="number" id="cjk-rows" min="2" max="20" value="10">
-            <button class="num-btn" onclick="changeCJK('rows',1)">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sb cjk-only" style="padding-top:8px;padding-bottom:24px;">
-      <button class="btn btn-primary" style="width:100%;justify-content:center;height:40px;font-size:14px;" onclick="gerarCJK()">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M6 8h4M8 6v4"/></svg>
-        <span id="btn-gerar-cjk">Gerar grelha</span>
-      </button>
-    </div>
-
   </aside>
 
   <main class="preview-area">
@@ -694,13 +602,6 @@
           <div class="sheet-empty">
             <div class="sheet-empty-icon">✒</div>
             <div class="sheet-empty-text" id="empty-hint">Configure e clique em "Gerar folha"</div>
-          </div>
-        </div>
-        <!-- CJK sheet -->
-        <div class="cjk-sheet cjk-only" id="folha-cjk" style="display:none;">
-          <div class="sheet-empty">
-            <div class="sheet-empty-icon">田</div>
-            <div class="sheet-empty-text" id="cjk-empty-hint">Configure e clique em "Gerar grelha"</div>
           </div>
         </div>
       </div>
@@ -1139,6 +1040,8 @@ C['he'] = { cursiva:[
   {n:'Frank Ruhl Libre',   u:'Frank+Ruhl+Libre',   s:'אבג', f:"'Frank Ruhl Libre',serif",     w:'400', b:null, d:'Clássica com grande legibilidade'},
 ]};
 
+const REP_DEFAULT=['Repetição do guia','Todas as linhas','Só a primeira'];
+
 /* ── Patch selectLang para RTL e Séyès ── */
 const _origSelectLang = selectLang;
 selectLang = function(l){
@@ -1150,253 +1053,25 @@ selectLang = function(l){
   const lsd = document.getElementById('lbl-ts-d');
   if(ls)  ls.textContent  = t.ts  || 'Pauta Séyès';
   if(lsd) lsd.textContent = t.tsD || 'Formato caderno francês';
+  /* Repetição do guia — i18n */
+  const REP = {
+    'pt-PT':['Repetição do guia','Todas as linhas','Só a primeira'],
+    'pt-BR':['Repetição do guia','Todas as linhas','Só a primeira'],
+    'es':['Repetición de la guía','Todas las líneas','Solo la primera'],
+    'en':['Guide repetition','All lines','First line only'],
+    'fr':['Répétition du guide','Toutes les lignes','La première seulement'],
+    'de':['Vorlagen-Wiederholung','Alle Zeilen','Nur die erste'],
+    'ar':['تكرار النموذج','كل الأسطر','السطر الأول فقط'],
+    'he':['חזרת המנחה','כל השורות','רק הראשונה'],
+  }[l] || REP_DEFAULT;
+  const rp=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
+  rp('lbl-repeat-titulo',REP[0]); rp('lbl-rep-todas',REP[1]); rp('lbl-rep-primeira',REP[2]);
   const sidebar = document.querySelector('.sidebar');
   if(RTL_LANGS.has(l)){ sidebar.setAttribute('dir','rtl'); }
   else { sidebar.removeAttribute('dir'); }
   updateSeyesPill();
   applyRTL();
-  /* CJK: mostrar/ocultar toggle de modo e trocar sidebar */
-  const CJK_LANGS = new Set(['ja','zh','ko']);
-  const bar = document.getElementById('app-mode-bar');
-  if(CJK_LANGS.has(l)){
-    bar.style.display = '';
-    /* Auto-switch para modo CJK */
-    setAppMode('cjk');
-  } else {
-    bar.style.display = 'none';
-    setAppMode('ltr');
-  }
-  /* Atualizar textos CJK se disponíveis */
-  updateCJKStrings(l);
-  /* Atualizar grid de fontes CJK */
-  if(CJK_LANGS.has(l)) renderCJKFontGrid();
 };
-
-/* ════════════════════════════════════════════════════════════
-   CJK MODULE
-   ════════════════════════════════════════════════════════════ */
-
-/* ── CJK i18n strings ── */
-const T_CJK = {
-  ja: {
-    tag:'かな・漢字 練習帳', btnGerar:'生成', btnPrint:'印刷',
-    chars:'練習する文字', charsSub:'文字を入力してください', ph:'例：あいうえお、永字八法…',
-    gridType:'罫線タイプ', gGenkou:'原稿用紙', gGenkouD:'四分割の升目（縦横書き対応）',
-    gTian:'田字格', gTianD:'漢字練習用の四象限格子',
-    gHangul:'ハングル格子', gHangulD:'韓国語の音節ブロック用',
-    dir:'書き方向', yoko:'横書き', tate:'縦書き',
-    fonte:'フォント', colsRows:'列 × 行', cols:'列', rows:'行',
-    btnGeraCJK:'練習帳を生成', shTitle:'書写練習帳',
-    descCursiva:'ひらがな・カタカナ・漢字の書き取り練習。',
-    emptyHint:'設定して「練習帳を生成」をクリック',
-    defChars:'あいうえおかきくけこさしすせそたちつてとなにぬねの',
-    locale:'ja-JP', btnExport:'エクスポート',
-  },
-  zh: {
-    tag:'汉字书法练习', btnGerar:'生成', btnPrint:'打印',
-    chars:'练习字符', charsSub:'输入汉字', ph:'例：永字八法、一二三四五…',
-    gridType:'格子类型', gGenkou:'原稿纸', gGenkouD:'带中心线的方格',
-    gTian:'田字格', gTianD:'田字格 — 四格练字',
-    gHangul:'韩文格', gHangulD:'韩语音节方块',
-    dir:'书写方向', yoko:'横排', tate:'竖排',
-    fonte:'字体', colsRows:'列 × 行', cols:'列', rows:'行',
-    btnGeraCJK:'生成练字格', shTitle:'书法练字纸',
-    descCursiva:'汉字书法练习纸，适合小学生和成人学习。',
-    emptyHint:'设置后点击「生成练字格」',
-    defChars:'永字八法一二三四五六七八九十百千万',
-    locale:'zh-CN', btnExport:'导出',
-  },
-  ko: {
-    tag:'한글 쓰기 연습장', btnGerar:'생성', btnPrint:'인쇄',
-    chars:'연습할 글자', charsSub:'글자를 입력하세요', ph:'예: 가나다라마바사…',
-    gridType:'격자 유형', gGenkou:'원고지', gGenkouD:'4분할 칸 (일본식)',
-    gTian:'전자격', gTianD:'田字格 — 한자 연습용',
-    gHangul:'한글 격자', gHangulD:'한글 음절 블록 연습용',
-    dir:'쓰기 방향', yoko:'가로쓰기', tate:'세로쓰기',
-    fonte:'폰트', colsRows:'열 × 행', cols:'열', rows:'행',
-    btnGeraCJK:'연습장 생성', shTitle:'한글 쓰기 연습장',
-    descCursiva:'한글 자모와 음절 받아쓰기 연습.',
-    emptyHint:'설정 후 「연습장 생성」 클릭',
-    defChars:'가나다라마바사아자차카타파하',
-    locale:'ko-KR', btnExport:'내보내기',
-  },
-};
-
-/* ── CJK font catalogue ── */
-const C_CJK = {
-  ja: [
-    {n:'Zen Kurenaido',  u:'Zen+Kurenaido',  s:'あ', f:"'Zen Kurenaido',serif",    w:'400', b:'↗', d:'筆書き風、練習帳向き'},
-    {n:'Shippori Mincho',u:'Shippori+Mincho', s:'漢', f:"'Shippori Mincho',serif",  w:'400', b:null, d:'明朝体、読みやすい'},
-    {n:'Noto Sans JP',   u:'Noto+Sans+JP',   s:'字', f:"'Noto Sans JP',sans-serif",w:'400', b:null, d:'ゴシック体、幅広いカバレッジ'},
-    {n:'M PLUS 1p',      u:'M+PLUS+1p',      s:'習', f:"'M PLUS 1p',sans-serif",   w:'400', b:null, d:'丸ゴシック、子供向け'},
-  ],
-  zh: [
-    {n:'Ma Shan Zheng',  u:'Ma+Shan+Zheng',  s:'永', f:"'Ma Shan Zheng',cursive",  w:'400', b:'↗', d:'毛笔楷书，练字首选'},
-    {n:'Long Cang',      u:'Long+Cang',       s:'法', f:"'Long Cang',cursive",      w:'400', b:null, d:'行书风格，流畅自然'},
-    {n:'Noto Sans SC',   u:'Noto+Sans+SC',    s:'字', f:"'Noto Sans SC',sans-serif",w:'400', b:null, d:'简体中文，覆盖广'},
-    {n:'ZCOOL XiaoWei', u:'ZCOOL+XiaoWei',   s:'书', f:"'ZCOOL XiaoWei',serif",    w:'400', b:null, d:'传统宋体，适合正式练习'},
-  ],
-  ko: [
-    {n:'Gowun Dodum',    u:'Gowun+Dodum',     s:'가', f:"'Gowun Dodum',sans-serif", w:'400', b:'↗', d:'둥글고 가독성 높음 — 어린이 추천'},
-    {n:'Noto Sans KR',   u:'Noto+Sans+KR',    s:'나', f:"'Noto Sans KR',sans-serif",w:'400', b:null, d:'완전한 한글 지원'},
-    {n:'Hahmlet',        u:'Hahmlet',          s:'다', f:"'Hahmlet',serif",           w:'400', b:null, d:'명조체 스타일'},
-    {n:'Black Han Sans', u:'Black+Han+Sans',   s:'라', f:"'Black Han Sans',sans-serif",w:'400',b:null, d:'굵고 선명한 고딕'},
-  ],
-};
-
-/* ── CJK state ── */
-let cjkGrid  = 'genkou'; /* genkou | tian | hangul */
-let cjkDir   = 'yoko';   /* yoko | tate */
-let cjkFonte = null;
-let appMode  = 'ltr';    /* ltr | cjk */
-const CJK_LANGS = new Set(['ja','zh','ko']);
-
-function updateCJKStrings(l){
-  if(!CJK_LANGS.has(l)) return;
-  const t = T_CJK[l];
-  const sid = (id,txt)=>{ const el=document.getElementById(id); if(el&&txt!==undefined) el.textContent=txt; };
-  sid('lbl-cjk-chars',   t.chars);
-  sid('lbl-cjk-chars-sub',t.charsSub);
-  const ci = document.getElementById('cjk-input');
-  if(ci){ ci.placeholder = t.ph; ci.value = ''; }
-  sid('lbl-grid-type',   t.gridType);
-  sid('lbl-gt-genkou',   t.gGenkou);  sid('lbl-gt-genkou-d', t.gGenkouD);
-  sid('lbl-gt-tian',     t.gTian);    sid('lbl-gt-tian-d',   t.gTianD);
-  sid('lbl-gt-hangul',   t.gHangul);  sid('lbl-gt-hangul-d', t.gHangulD);
-  sid('lbl-dir',         t.dir);
-  sid('lbl-dir-yoko',    t.yoko);     sid('lbl-dir-tate',    t.tate);
-  sid('lbl-cjk-fonte',   t.fonte);
-  sid('lbl-cjk-cols',    t.colsRows); sid('lbl-cols',t.cols); sid('lbl-rows',t.rows);
-  sid('btn-gerar-cjk',   t.btnGeraCJK);
-  sid('cjk-empty-hint',  t.emptyHint);
-  /* topbar tag */
-  const tagEl = document.getElementById('topbar-tag');
-  if(tagEl) tagEl.textContent = t.tag;
-  /* app mode btns */
-  const ab = document.getElementById('appmode-cjk');
-  if(ab) ab.textContent = (l==='ja'?'田 格子': l==='zh'?'田 格子': '田 격자');
-}
-
-/* ── app mode toggle ── */
-function setAppMode(mode){
-  appMode = mode;
-  document.body.classList.toggle('cjk-mode', mode==='cjk');
-  document.getElementById('appmode-ltr').classList.toggle('active', mode==='ltr');
-  document.getElementById('appmode-cjk').classList.toggle('active', mode==='cjk');
-  /* swap sheet visibility */
-  const ltrSheet = document.getElementById('folha');
-  const cjkSheet = document.getElementById('folha-cjk');
-  if(mode==='cjk'){
-    ltrSheet.style.display='none'; cjkSheet.style.display='';
-  } else {
-    ltrSheet.style.display=''; cjkSheet.style.display='none';
-  }
-  setTimeout(()=>changeZoom(0),30);
-}
-
-/* ── CJK grid selector ── */
-function selectGrid(btn){
-  document.querySelectorAll('.grid-type-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  cjkGrid = btn.dataset.grid;
-  /* tategaki só faz sentido para genkou / tian */
-  const tw = document.getElementById('sb-tategaki-wrap');
-  if(tw) tw.style.display = cjkGrid==='hangul' ? 'none' : '';
-}
-
-function selectDir(d){
-  cjkDir=d;
-  document.getElementById('dir-yoko').classList.toggle('active',d==='yoko');
-  document.getElementById('dir-tate').classList.toggle('active',d==='tate');
-}
-
-/* ── CJK font grid ── */
-function renderCJKFontGrid(){
-  const lista = C_CJK[lang] || C_CJK['ja'];
-  loadFonts(lista.map(f=>({u:f.u})));
-  const grid = document.getElementById('cjk-font-grid');
-  if(!grid) return;
-  grid.innerHTML = lista.map((f,i)=>`
-    <div class="glyph-card${i===0?' active':''}" onclick="selCJKFont(${i})" title="${f.d}">
-      ${f.b?`<span class="fc-badge-cjk">${f.b}</span>`:''}
-      <span class="gs" style="font-family:${f.f};font-weight:${f.w};">${f.s}</span>
-      <span class="gn">${f.n}</span>
-    </div>`).join('');
-  cjkFonte = lista[0];
-}
-
-function selCJKFont(i){
-  const lista = C_CJK[lang]||C_CJK['ja'];
-  cjkFonte = lista[i];
-  document.querySelectorAll('.glyph-card').forEach((c,j)=>c.classList.toggle('active',j===i));
-}
-
-function changeCJK(field, delta){
-  const id = field==='cols' ? 'cjk-cols' : 'cjk-rows';
-  const [min,max] = field==='cols' ? [4,20] : [2,20];
-  const el = document.getElementById(id);
-  el.value = Math.min(max, Math.max(min, +el.value+delta));
-}
-
-/* ── Gerar grelha CJK ── */
-function gerarCJK(){
-  const tStr  = T_CJK[lang] || T_CJK['ja'];
-  const raw   = (document.getElementById('cjk-input')||{}).value||'';
-  const chars = [...(raw.trim() || tStr.defChars)]; /* split por codepoint */
-  const cols  = parseInt(document.getElementById('cjk-cols').value)||12;
-  const rows  = parseInt(document.getElementById('cjk-rows').value)||10;
-  const fam   = (cjkFonte||C_CJK[lang]?.[0]||C_CJK.ja[0]).f;
-  const hoje  = new Date().toLocaleDateString(tStr.locale,{day:'2-digit',month:'long',year:'numeric'});
-  const folha = document.getElementById('folha-cjk');
-  const tate  = cjkDir==='tate' && cjkGrid!=='hangul';
-
-  /* cell config */
-  const cellCfg = {
-    genkou: { cls:'genkou-cell', sz:44, fs:26 },
-    tian:   { cls:'tian-cell',   sz:50, fs:30 },
-    hangul: { cls:'hangul-cell', sz:48, fs:28 },
-  }[cjkGrid];
-
-  let ci = 0; /* char index, cycling */
-  let html = `<div class="cjk-sheet-header">
-    <span class="sheet-title">${tStr.shTitle}</span>
-    <span class="sheet-date">${hoje}</span>
-  </div>`;
-
-  if(tate){
-    /* Tategaki: colunas da direita para a esquerda, chars de cima para baixo */
-    html += `<div class="genkou-grid tategaki">`;
-    for(let c=0;c<cols;c++){
-      html += `<div class="genkou-row">`;
-      for(let r=0;r<rows;r++){
-        const ch = chars.length ? chars[ci++ % chars.length] : '';
-        html += `<div class="${cellCfg.cls}" style="width:${cellCfg.sz}px;height:${cellCfg.sz}px;">
-          <span class="cjk-guide-char" style="font-family:${fam};font-size:${cellCfg.fs}px;">${ch}</span>
-        </div>`;
-      }
-      html += `</div>`;
-    }
-    html += `</div>`;
-  } else {
-    /* Yokogaki: linhas normais */
-    for(let r=0;r<rows;r++){
-      html += `<div class="cjk-row">`;
-      for(let c=0;c<cols;c++){
-        const ch = chars.length ? chars[ci++ % chars.length] : '';
-        html += `<div class="${cellCfg.cls}" style="width:${cellCfg.sz}px;height:${cellCfg.sz}px;">
-          <span class="cjk-guide-char" style="font-family:${fam};font-size:${cellCfg.fs}px;">${ch}</span>
-        </div>`;
-      }
-      html += `</div>`;
-    }
-  }
-
-  /* Rodapé */
-  html += `<div style="position:absolute;bottom:16px;right:28px;font-family:var(--font-mono);font-size:9px;color:#ccc;letter-spacing:.05em;">${(cjkFonte||C_CJK[lang]?.[0]).n} · ${lang} · ${tate?'縦書き':'横書き'}</div>`;
-
-  folha.innerHTML = html;
-  setTimeout(()=>changeZoom(0),50);
-}
 
 /* ── init ── */
 preload();
